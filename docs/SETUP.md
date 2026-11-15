@@ -100,16 +100,37 @@ Alternatively, transfer the APK to the phone, open it in the system file manager
 
 ### Install on Google TV or Android TV
 
-1. Open **Settings → System → About** (on older sets, **Device Preferences → About**) and select the build entry repeatedly until Developer options becomes available. Menu names vary by model.
-2. Open **Developer options** and enable **Wireless debugging** on a TV that offers it. Put the computer and TV on the same network. With a modern paired connection, use the IP and **pairing port** shown by the pairing dialog, then the **connection port** shown on the main Wireless debugging screen:
+**Get the APK onto your computer first.** For a live game with separate phones, [build your configured APK](#build). To try the TV app, [extract the preview APK](#extract-the-preview-apk). The commands below use the configured build's path. For the preview, substitute `downloads/Dash-Arcade-v2-debug.apk`.
+
+#### Wi-Fi sideload with ADB
+
+1. Put your computer and TV on the same local network. Install [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools) on the computer. Run `adb version` to confirm it is on your PATH. If you opened a terminal in the Platform-Tools folder instead, use `./adb` on macOS or Linux and `.\adb.exe` in Windows PowerShell.
+2. On the TV, open **Settings → System → About**. On some TVs it is under **Settings → Device Preferences → About**. Highlight **Android TV OS build** (sometimes **Build**) and press the remote's center button seven times, until the developer message appears.
+3. Return to **Settings → System → Developer options** and turn on **Wireless debugging**, if shown. Open **Pair device with pairing code**. Replace the example IP and ports below with the values displayed on your TV:
    ```sh
-   adb pair TV_IP:PAIRING_PORT
-   adb connect TV_IP:CONNECTION_PORT
+   adb pair 192.168.1.50:37123
+   adb connect 192.168.1.50:37345
    adb devices
-   adb install -r android/app/build/outputs/apk/debug/app-debug.apk
    ```
-   For a TV that exposes a legacy network debugging address, use `adb connect TV_IP:PORT` with the address shown by the device instead. Use `adb -s TV_IP:CONNECTION_PORT install -r android/app/build/outputs/apk/debug/app-debug.apk` when multiple Android devices are connected.
-3. Return to the home screen and launch **Dash Arcade** from **Apps**. The TV opens the host. Point the phones at the lobby QR or give them the four-letter code. [ADB wireless device setup](https://developer.android.com/tools/adb#wireless)
+   Enter the six-digit code when prompted. The first port comes from the **pairing dialog**. The second comes from the main **Wireless debugging** screen. If your TV provides a legacy **Network debugging** address instead, enable it and run `adb connect TV_IP:PORT` using the address it shows. Approve the TV's connection prompt. [Google's ADB wireless setup](https://developer.android.com/tools/adb#wireless)
+4. Confirm `adb devices` lists the TV with status `device`. If a phone or emulator is also connected, copy the TV's first-column value and use it with `-s`. Run the following from the repository root:
+   ```sh
+   adb -s 192.168.1.50:37345 install -r "android/app/build/outputs/apk/debug/app-debug.apk"
+   ```
+   Replace `192.168.1.50:37345` with your TV's value. Wait for **Success**.
+5. On the TV, go to **Home → Apps → Dash Arcade**. If the tile hasn't appeared yet, launch it once over ADB:
+   ```sh
+   adb -s 192.168.1.50:37345 shell am start -n com.pratikdash.arcade/.MainActivity
+   ```
+   Use your TV's value in this command as well. When the lobby opens, scan its QR from a phone or enter the room code manually.
+
+#### USB drive sideload on compatible TVs
+
+If your TV can read USB storage and allows APK installation from a file manager:
+
+1. Copy the `.apk` file from your computer to a USB flash drive. Plug the drive into the TV.
+2. On the TV, open a file manager that can browse the drive and select the APK. If Android asks, allow **Install unknown apps** for that file manager in the settings screen it opens, then return to the APK and select **Install**.
+3. Select **Open** or find **Dash Arcade** under **Home → Apps**. If the TV's firmware or administrator restricts APK installs, use the [TV browser, mirroring, or HDMI option](#tv-operating-systems).
 
 ## Start game night
 

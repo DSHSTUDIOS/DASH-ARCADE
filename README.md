@@ -2,7 +2,7 @@
 
 Eleven multiplayer party games for one TV and 2–12 phone controllers, drawn in a crayon-and-pencil sketchbook style. Designed, engineered & built by Pratik Dash.
 
-[TV and phone setup guide](docs/SETUP.md) · [Full source tree](FILE-TREE.txt)
+[Install the APK on your TV](docs/SETUP.md#install-on-google-tv-or-android-tv) · [TV and phone setup guide](docs/SETUP.md) · [Full source tree](FILE-TREE.txt)
 
 ![Dash Arcade’s sketchbook landing page](docs/sketchbook-preview.png)
 
