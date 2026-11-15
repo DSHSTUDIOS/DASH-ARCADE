@@ -6,7 +6,7 @@ import { enableSound, playEffect } from "@/lib/sound";
 export default function BootSplash() {
   const [visible, setVisible] = useState(true);
   useEffect(() => {
-    const timeout = setTimeout(() => setVisible(false), 2500);
+    const timeout = setTimeout(() => setVisible(false), 1450);
     let played = false;
     function audio(event: Event) {
       if (!event.isTrusted || played) return;
@@ -37,7 +37,7 @@ export default function BootSplash() {
           <i />
           <i />
         </div>
-        <h1>DASH ARCADE OS // V2.0</h1>
+        <h1>DASH ARCADE</h1>
         <p>DESIGNED, ENGINEERED &amp; BUILT BY PRATIK DASH</p>
         <div className="boot-progress" aria-hidden="true">
           <i />

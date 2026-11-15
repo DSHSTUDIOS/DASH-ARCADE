@@ -46,15 +46,20 @@ export function Timer({
 }) {
   const seconds = secondsLeft(deadline, now);
   return (
-    <div className="timer" data-urgent={seconds <= 10}>
+    <div
+      className="timer"
+      data-urgent={seconds <= 10}
+      role="timer"
+      aria-label={`${seconds} seconds left`}
+    >
       <span>
         <Clock3 size={17} />{" "}
-        <b>{`0${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`}</b>
+        <b>{`${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`}</b>
       </span>
       {duration && (
-        <div className="timer-track">
+        <div className="timer-track" aria-hidden="true">
           <i
-            style={{ width: `${Math.min(100, (100 * seconds) / duration)}%` }}
+            style={{ transform: `scaleX(${Math.min(1, seconds / duration)})` }}
           />
         </div>
       )}

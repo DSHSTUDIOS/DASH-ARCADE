@@ -76,6 +76,7 @@ export function GameCard({
   onVote?: () => void;
 }) {
   const { title, category, description, icon: Icon, accent } = gameInfo(choice);
+  const votes = room?.online.filter((id) => room.votes[id] === choice) ?? [];
   const content = (
     <>
       <div className="game-card-icon">
@@ -88,22 +89,16 @@ export function GameCard({
       </div>
       {room && (
         <div className="voter-badges">
-          {Object.entries(room.votes)
-            .filter(([id, vote]) => vote === choice && room.online.includes(id))
-            .map(([id]) => {
-              const player = findPlayer(room, id);
-              return (
-                player && (
-                  <span key={id} title={player.name} className="vote-avatar">
-                    <JellyAvatar
-                      {...player.avatar}
-                      size={40}
-                      reaction="happy"
-                    />
-                  </span>
-                )
-              );
-            })}
+          {votes.map((id) => {
+            const player = findPlayer(room, id);
+            return (
+              player && (
+                <span key={id} title={player.name} className="vote-avatar">
+                  <JellyAvatar {...player.avatar} size={40} reaction="happy" />
+                </span>
+              )
+            );
+          })}
         </div>
       )}
       {onVote && <ArrowRight className="choice-arrow" size={18} />}
@@ -121,7 +116,12 @@ export function GameCard({
       {content}
     </button>
   ) : (
-    <article className="game-card" style={style} data-highlighted={highlighted}>
+    <article
+      className="game-card"
+      style={style}
+      data-highlighted={highlighted}
+      data-voted={votes.length > 0 || undefined}
+    >
       {content}
     </article>
   );
@@ -179,7 +179,11 @@ export function Leaderboard({ room }: { room: HubView }) {
       </p>
       <div className="leaderboard-list">
         {ids.map((id, i) => (
-          <div className="leaderboard-row" key={id}>
+          <div
+            className="leaderboard-row"
+            data-leading={i === 0 && room.gamesPlayed > 0}
+            key={id}
+          >
             <span className="place">{i + 1}</span>
             <PlayerBadge
               player={findPlayer(room, id)}
@@ -259,21 +263,24 @@ export function Podium({ room, onNew }: { room: HubView; onNew: () => void }) {
           );
         })}
       </div>
-      <div className="mvp-awards">
-        {winner && (
-          <span className="pill">
-            <Trophy size={16} /> Night champion · {winner.name}
-          </span>
-        )}
-        {mvp && room.wins[mvp.id] > 0 && (
-          <span className="pill">
-            <Sparkles size={16} /> Most wins · {mvp.name} ({room.wins[mvp.id]})
-          </span>
-        )}
+      <div className="podium-actions">
+        <div className="mvp-awards">
+          {winner && (
+            <span className="pill">
+              <Trophy size={16} /> Night champion · {winner.name}
+            </span>
+          )}
+          {mvp && room.wins[mvp.id] > 0 && (
+            <span className="pill">
+              <Sparkles size={16} /> Most wins · {mvp.name} ({room.wins[mvp.id]}
+              )
+            </span>
+          )}
+        </div>
+        <button className="secondary" onClick={onNew}>
+          <ArrowLeft size={16} /> Host a new room
+        </button>
       </div>
-      <button className="secondary" onClick={onNew}>
-        <ArrowLeft size={16} /> Host a new room
-      </button>
     </section>
   );
 }

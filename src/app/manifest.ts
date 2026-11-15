@@ -11,8 +11,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Dash Arcade",
     description: "The Dash Arcade phone controller.",
     display: "standalone",
-    background_color: "#fff7e4",
-    theme_color: "#fff7e4",
+    background_color: "#242047",
+    theme_color: "#242047",
     icons: [
       {
         src: "/icons/icon-192.png",

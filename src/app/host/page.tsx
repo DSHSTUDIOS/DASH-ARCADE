@@ -442,7 +442,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
         : state.roulette[flashIndex % state.roulette.length]
       : undefined;
   return (
-    <div className="page-shell host-shell" onPointerDownCapture={enableSound}>
+    <div
+      className="page-shell host-shell"
+      data-phase={state.phase.toLowerCase()}
+      onPointerDownCapture={enableSound}
+    >
       <header className="topbar">
         <div className="host-brand">
           <Brand />
@@ -499,7 +503,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
       <main className="host-main">
         {state.phase === "LOBBY" && (
           <>
-            <div className="lobby-heading">
+            <div className="lobby-heading" data-counting={autoStartAt > 0}>
               <ModuleLabel icon={<Gamepad2 size={15} />}>
                 HOST LOBBY
               </ModuleLabel>
@@ -550,7 +554,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 {eligible.length ? (
                   <div className="roster-grid">
                     {eligible.map((player) => (
-                      <div key={player.id} className="roster-avatar">
+                      <div
+                        key={player.id}
+                        className="roster-avatar"
+                        data-ready={player.ready && online.includes(player.id)}
+                      >
                         <PlayerBadge
                           player={player}
                           size={72}
@@ -636,8 +644,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
               </p>
               <VotingCards room={room} active={choice} />
               <footer className="split vote-footer">
-                <span>
-                  {voters} / {online.length} votes in
+                <span className="vote-completion">
+                  <span>{voters} / {online.length} votes in</span>
+                  <span className="vote-completion-track" aria-hidden="true">
+                    <i style={{ transform: `scaleX(${online.length ? voters / online.length : 0})` }} />
+                  </span>
                 </span>
                 {state.phase === "VOTING" && (
                   <button
@@ -663,7 +674,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
             className="active-game"
             style={gameColor(currentGame.accent)}
           >
-            <div className="active-game-title">
+            <div key={state.epoch} className="active-game-title">
               <div className="game-card-icon">
                 <currentGame.icon size={27} />
               </div>

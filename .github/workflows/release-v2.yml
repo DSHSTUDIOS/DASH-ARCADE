@@ -1,4 +1,4 @@
-name: Publish Dash Arcade v2.0.3
+name: Publish Dash Arcade v2.1.0
 
 on:
   push:
@@ -19,18 +19,18 @@ jobs:
       - name: Assemble the signed APK and verify its checksum
         run: |
           node scripts/extract-preview-apk.mjs
-          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.0.3.apk
+          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.1.0.apk
       - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           ARCADE_RELEASE_COMMIT: ${{ github.sha }}
         run: |
-          if gh release view v2.0.3 > /dev/null 2>&1; then
-            gh release download v2.0.3 --pattern Dash-Arcade-v2.0.3.apk --output existing.apk
-            cmp existing.apk Dash-Arcade-v2.0.3.apk
+          if gh release view v2.1.0 > /dev/null 2>&1; then
+            gh release download v2.1.0 --pattern Dash-Arcade-v2.1.0.apk --output existing.apk
+            cmp existing.apk Dash-Arcade-v2.1.0.apk
             exit
           fi
-          gh release create v2.0.3 Dash-Arcade-v2.0.3.apk \
+          gh release create v2.1.0 Dash-Arcade-v2.1.0.apk \
             --target "$ARCADE_RELEASE_COMMIT" \
-            --title "Dash Arcade v2.0.3" \
-            --notes "Dash Arcade v2.0.3 shows Spotify Now Playing on Android TV through Android media controls. Open Spotify from Party music and enable notification access to see track details. See the setup guide for TV installation."
+            --title "Dash Arcade v2.1.0" \
+            --notes "Dash Arcade v2.1.0 refreshes the hand-drawn TV and phone experience with new game launch, voting, and podium transitions. Compact views fit the 960×540 TV viewport, and the presentation honors reduced-motion settings. See the setup guide for TV installation."

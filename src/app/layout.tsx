@@ -3,6 +3,7 @@ import PwaRegistration from "@/components/PwaRegistration";
 import "./globals.css";
 import "./sketchbook.css";
 import "./tv-fit.css";
+import "./showtime.css";
 
 export const metadata: Metadata = {
   title: "Dash Arcade | TV Party Hub",
@@ -22,7 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#fff7e4",
+  themeColor: "#242047",
   viewportFit: "cover",
 };
 

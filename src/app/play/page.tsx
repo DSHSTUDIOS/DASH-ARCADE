@@ -353,7 +353,7 @@ function Controller({
               </ModuleLabel>
               <JellyAvatar {...player.avatar} size={150} reaction="happy" />
               <h1>You’re in, {player.name}.</h1>
-              <p>Look at the TV for the host to start game night.</p>
+              <p>Game night starts when everyone is ready.</p>
             </section>
           )}
           {(room.phase === "VOTING" || room.phase === "ROULETTE") && (
