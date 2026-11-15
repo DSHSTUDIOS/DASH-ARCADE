@@ -22,7 +22,6 @@ import {
   ModuleLabel,
   Podium,
   Signature,
-  VotingCards,
 } from "@/components/HubUI";
 import { PlayerBadge, Timer } from "@/components/GameUI";
 import RoomStatus from "@/components/RoomStatus";
@@ -30,6 +29,7 @@ import BootSplash from "@/components/BootSplash";
 import Credits from "@/components/Credits";
 import { useTVRemote } from "@/hooks/useTVRemote";
 import HostAudio from "@/components/HostAudio";
+import TVBallot from "@/components/TVBallot";
 import { spotifyInvite } from "@/lib/spotifyJam";
 import JellyAvatar from "@/components/JellyAvatar";
 import { registry } from "@/games/registry";
@@ -507,7 +507,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
               <ModuleLabel icon={<Gamepad2 size={15} />}>
                 HOST LOBBY
               </ModuleLabel>
-              <h1>Game night starts here.</h1>
+              <h1>Game night<span>.</span></h1>
               <p>Join from your phone, pick a Jelly, and ready up.</p>
             </div>
             <div className="lobby-layout">
@@ -547,8 +547,8 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                   <ModuleLabel icon={<Users size={15} />}>
                     THE PARTY
                   </ModuleLabel>
-                  <span className="pill">
-                    {online.length} / {ROOM_CAP} ready
+                  <span className="pill ready-total">
+                    <strong>{online.length}</strong> / {ROOM_CAP} ready
                   </span>
                 </div>
                 {eligible.length ? (
@@ -626,23 +626,19 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
         {(state.phase === "VOTING" || state.phase === "ROULETTE") && (
           <div className="vote-layout">
             <section className="voting">
-              <div className="split voting-top">
-                <ModuleLabel icon={<Vote size={16} />}>VOTING HUB</ModuleLabel>
+              <div className="voting-top">
+                <div className="voting-heading">
+                  <ModuleLabel icon={<Vote size={16} />}>VOTING HUB</ModuleLabel>
+                  <h1>{state.phase === "ROULETTE" ? "Tie-breaker!" : "Pick a game."}</h1>
+                  <p>{state.phase === "ROULETTE" ? "Picking from the tied games…" : "Vote on your phone."}</p>
+                </div>
                 <Timer
                   deadline={state.deadline}
                   now={now || Date.now()}
                   duration={state.phase === "VOTING" ? 60 : 3}
                 />
               </div>
-              <h1>
-                {state.phase === "ROULETTE" ? "Tie-breaker!" : "What’s next?"}
-              </h1>
-              <p>
-                {state.phase === "ROULETTE"
-                  ? "The arcade is picking from the tied votes."
-                  : "Vote on your phone. Everyone’s vote locks it in."}
-              </p>
-              <VotingCards room={room} active={choice} />
+              <TVBallot key={state.epoch} room={room} contender={choice} />
               <footer className="split vote-footer">
                 <span className="vote-completion">
                   <span>{voters} / {online.length} votes in</span>
@@ -708,6 +704,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           />
         )}
       </main>
+      {state.epoch > 0 && ["VOTING", "GAME", "PODIUM"].includes(state.phase) && (
+        <div key={state.epoch} className="phase-wipe" aria-hidden="true">
+          <i /><i /><i />
+        </div>
+      )}
       {jamOpen && (
         <div className="dialog-backdrop" onClick={() => setJamOpen(false)}>
           <section

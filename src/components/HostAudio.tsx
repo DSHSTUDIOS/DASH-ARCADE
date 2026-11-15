@@ -1,7 +1,7 @@
 "use client";
 
 import { Headphones, Volume2, VolumeX } from "@/components/ArcadeIcons";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { tvMusic, useTvMusic } from "@/lib/useTvMusic";
 import { enableSound, playEffect } from "@/lib/sound";
 import type { HubState } from "@/lib/types";
@@ -192,13 +192,10 @@ export default function HostAudio({
         onError={() => setError(true)}
       />
       {spotify?.title && (
-        <div
-          className="spotify-now-playing"
-          title={[spotify.title, spotify.artist].filter(Boolean).join(" · ")}
-        >
-          <small>{spotify.playing ? "Spotify · Now playing" : "Spotify · Paused"}</small>
-          <strong>{spotify.title}{spotify.artist ? ` · ${spotify.artist}` : ""}</strong>
-        </div>
+        <NowPlaying
+          track={[spotify.title, spotify.artist].filter(Boolean).join(" · ")}
+          playing={Boolean(spotify.playing)}
+        />
       )}
       <details className="music-menu">
         <summary className="icon-button" aria-label="Party music">
@@ -297,6 +294,44 @@ export default function HostAudio({
       >
         {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
+    </div>
+  );
+}
+
+function NowPlaying({ track, playing }: { track: string; playing: boolean }) {
+  const viewport = useRef<HTMLDivElement>(null);
+  const line = useRef<HTMLElement>(null);
+  const [overflow, setOverflow] = useState(0);
+
+  useEffect(() => {
+    const frame = viewport.current;
+    const text = line.current;
+    if (!frame || !text) return;
+    const measure = () =>
+      setOverflow(Math.max(0, Math.ceil(text.scrollWidth - frame.clientWidth)));
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    observer.observe(text);
+    measure();
+    return () => observer.disconnect();
+  }, [track]);
+
+  return (
+    <div className="spotify-now-playing" title={track}>
+      <small>{playing ? "Spotify · Now playing" : "Spotify · Paused"}</small>
+      <div className="spotify-track-window" ref={viewport}>
+        <strong
+          key={track}
+          ref={line}
+          data-scroll={overflow > 1}
+          style={{
+            "--track-overflow": `-${overflow}px`,
+            "--track-duration": `${Math.max(7, (overflow * 2) / 30 + 4)}s`,
+          } as CSSProperties}
+        >
+          {track}
+        </strong>
+      </div>
     </div>
   );
 }

@@ -64,6 +64,7 @@ DASH-ARCADE/
 │   │   ├── layout.tsx
 │   │   ├── manifest.ts
 │   │   ├── page.tsx
+│   │   ├── party-stage.css
 │   │   ├── showtime.css
 │   │   ├── sketchbook.css
 │   │   └── tv-fit.css
@@ -81,7 +82,8 @@ DASH-ARCADE/
 │   │   ├── JellyAvatar.tsx
 │   │   ├── PwaRegistration.tsx
 │   │   ├── RoomStatus.tsx
-│   │   └── TouchCanvas.tsx
+│   │   ├── TouchCanvas.tsx
+│   │   └── TVBallot.tsx
 │   ├── engines/
 │   │   ├── CanvasMashupEngine.tsx
 │   │   ├── DeductionTriviaEngine.tsx

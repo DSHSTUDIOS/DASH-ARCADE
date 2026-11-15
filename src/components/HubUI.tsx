@@ -170,7 +170,7 @@ export function ranked(room: HubView) {
 export function Leaderboard({ room }: { room: HubView }) {
   const ids = ranked(room);
   return (
-    <aside className="panel leaderboard">
+    <aside className="panel leaderboard" data-crowded={ids.length > 8}>
       <ModuleLabel icon={<Trophy size={15} />}>GLOBAL LEADERBOARD</ModuleLabel>
       <h2>Top players</h2>
       <p>

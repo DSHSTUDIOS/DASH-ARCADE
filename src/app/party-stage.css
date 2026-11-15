@@ -1,0 +1,519 @@
+:root {
+  --stage: #162357;
+  --stage-light: #fff8d9;
+  --stage-muted: #e0e9ff;
+  --stage-yellow: #ffdf53;
+  --stage-curve: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  background-color: var(--stage);
+  background-image:
+    radial-gradient(ellipse at 55% 0%, #354aa3 0, transparent 64%),
+    repeating-linear-gradient(116deg, #8b8fef0d 0 2px, transparent 2px 42px);
+  background-size: auto;
+}
+
+:is(.primary, .module-label, .invite-panel, .game-card-icon) {
+  box-shadow: 4px 5px 0 #1a1744;
+}
+
+.primary {
+  background-color: #ffdb4e;
+}
+
+.primary:disabled {
+  box-shadow: none;
+}
+
+:is(.host-shell, .phone-shell, .landing) :is(h1, h2) {
+  letter-spacing: -0.018em;
+}
+
+.hero {
+  background-image:
+    radial-gradient(ellipse at 91% 56%, #f9a4dd 0, transparent 61%),
+    repeating-linear-gradient(0deg, transparent 0 31px, #8b63a81c 31px 33px);
+  box-shadow: 10px 10px 0 #0b102d;
+}
+
+.hero h1 {
+  color: #172658;
+  font-size: clamp(4.7rem, 10vw, 10rem);
+  text-shadow: 4px 4px 0 #bd90b769;
+}
+
+.hero .primary,
+.hero .secondary {
+  min-height: 62px;
+}
+
+.lobby-heading h1 > span {
+  color: #ffda53;
+}
+
+.lobby-heading h1,
+.voting-heading h1 {
+  text-shadow: 4px 5px 0 #0c1234;
+}
+
+.voting-top {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.voting-heading p {
+  color: var(--stage-muted);
+}
+
+.voting-top .timer {
+  transform: rotate(3deg);
+  min-width: clamp(82px, 13vw, 160px);
+  padding: 7px 9px 9px;
+  background: #ffdc56;
+  border: 2px solid #292249;
+  box-shadow: 4px 5px 0 #101634;
+  border-radius: var(--pencil-edge);
+}
+
+.voting-top .timer span {
+  justify-content: center;
+}
+
+.voting-top .timer b {
+  font-size: clamp(1.25rem, 4vw, 3.8rem);
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.voting-top .timer svg {
+  display: none;
+}
+
+.voting-top .timer-track {
+  height: 7px;
+  background: #26204c3d;
+}
+
+.voting-top .timer-track i {
+  background: #25204a;
+}
+
+.voting-top .timer[data-urgent="true"] {
+  color: #272043;
+  background: #ffc1d4;
+}
+
+.tv-ballot {
+  display: grid;
+  gap: 8px;
+}
+
+.tv-ballot .vote-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  animation: card-page-enter 300ms var(--stage-curve) both;
+}
+
+.tv-ballot .game-card {
+  isolation: isolate;
+  min-height: clamp(92px, 11vw, 145px);
+  padding: 12px;
+  border: 3px solid #292449;
+  box-shadow: 4px 5px 0 #0d1439;
+  border-radius: 8px 17px 14px 11px / 13px 9px 12px 8px;
+}
+
+.tv-ballot .game-card[data-voted="true"] {
+  box-shadow:
+    0 0 0 2px var(--game-accent),
+    4px 5px 0 #0d1439;
+}
+
+.tv-ballot .game-card::before {
+  inset: 0 -5% auto auto;
+  z-index: -1;
+  width: 63%;
+  height: 59%;
+  opacity: 0.55;
+}
+
+.tv-ballot .game-card-copy h3 {
+  font-family: Bricolage, var(--body);
+  font-size: clamp(1.05rem, 2.6vw, 2.1rem);
+  line-height: 1.04;
+  overflow-wrap: normal;
+}
+
+.tv-ballot .game-card-copy span {
+  font-size: clamp(0.52rem, 0.9vw, 0.72rem);
+}
+
+.tv-ballot .game-card-copy p {
+  display: none;
+}
+
+.tv-ballot-pages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+}
+
+.tv-ballot-pages button {
+  width: 37px;
+  min-height: 30px;
+  padding: 4px;
+}
+
+.tv-ballot-pages button[aria-pressed="true"] {
+  background: #ffdd5d;
+}
+
+.roulette-card {
+  display: grid;
+  margin-top: clamp(18px, 6vh, 48px);
+}
+
+.roulette-card .game-card {
+  display: grid;
+  grid-template-columns: clamp(50px, 10vw, 130px) minmax(0, 1fr);
+  gap: 14px;
+  min-height: clamp(145px, 27vh, 230px);
+  align-items: center;
+  padding: clamp(11px, 2.5vw, 32px);
+  animation: reel-slide 170ms var(--stage-curve) both;
+}
+
+.roulette-card .game-card-icon {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.roulette-card .game-card-icon svg {
+  width: 67%;
+  height: 67%;
+}
+
+.roulette-card .game-card-copy h3 {
+  font-size: clamp(2rem, 5.2vw, 4.7rem);
+  color: #281b49;
+  text-wrap: balance;
+}
+
+.roulette-card .game-card-copy p {
+  display: none;
+}
+
+.roulette-card .voter-badges {
+  grid-column: 1 / -1;
+}
+
+.phase-wipe {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  animation: wipe-away 610ms ease-in both;
+}
+
+.phase-wipe i {
+  position: absolute;
+  display: block;
+  inset: -20% -8%;
+  background: var(--wax), #ffcc46;
+  will-change: transform;
+  animation: cut-paper 610ms cubic-bezier(0.63, 0.07, 0.31, 0.96) both;
+}
+
+.phase-wipe i:nth-child(2) {
+  animation-delay: 40ms;
+  background-color: #f284cb;
+  clip-path: polygon(
+    0 0,
+    70% 0,
+    66% 18%,
+    79% 39%,
+    64% 56%,
+    76% 79%,
+    67% 100%,
+    0 100%
+  );
+}
+
+.phase-wipe i:nth-child(3) {
+  animation-delay: 70ms;
+  background-color: #9eebd6;
+  clip-path: polygon(
+    0 0,
+    52% 0,
+    45% 20%,
+    55% 38%,
+    42% 55%,
+    50% 80%,
+    39% 100%,
+    0 100%
+  );
+}
+
+.host-shell[data-phase="game"] .host-main::after,
+.host-shell[data-phase="podium"] .host-main::after {
+  content: none;
+}
+
+.host-shell[data-phase="podium"] .phase-wipe i {
+  background-color: #ffda62;
+}
+
+.host-shell[data-phase="podium"] .phase-wipe i:nth-child(2) {
+  background-color: #8fbfff;
+}
+
+.host-shell[data-phase="podium"] .phase-wipe i:nth-child(3) {
+  background-color: #fff3d6;
+}
+
+@keyframes cut-paper {
+  from {
+    transform: translateX(-118%) rotate(-9deg);
+  }
+  to {
+    transform: translateX(116%) rotate(-9deg);
+  }
+}
+
+@keyframes wipe-away {
+  0%,
+  92% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+@keyframes card-page-enter {
+  from {
+    opacity: 0.66;
+    transform: translateX(16px) rotate(0.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reel-slide {
+  from {
+    transform: translateX(-12px) skewX(-3deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.spotify-track-window {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.spotify-now-playing strong {
+  display: block;
+  width: max-content;
+  max-width: none;
+  text-overflow: clip;
+}
+
+.spotify-now-playing strong[data-scroll="true"] {
+  animation: spotify-scroll var(--track-duration) linear infinite;
+}
+
+@keyframes spotify-scroll {
+  0%,
+  17%,
+  100% {
+    transform: translateX(0);
+  }
+  48%,
+  65% {
+    transform: translateX(var(--track-overflow));
+  }
+}
+
+.phone-panel .primary {
+  min-height: 54px;
+}
+
+.phone-shell .vote-choice {
+  min-height: 80px;
+}
+
+.phone-voting .game-card-copy h3 {
+  font-size: clamp(1.1rem, 5.3vw, 1.5rem);
+}
+
+@media (orientation: landscape) and (min-width: 600px) and (max-height: 780px) {
+  .host-shell.page-shell {
+    width: min(1600px, calc(100% - clamp(22px, 4vw, 68px)));
+  }
+
+  .host-shell .topbar {
+    padding-bottom: 7px;
+  }
+
+  .host-shell .host-brand {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .host-shell .topbar .signature {
+    display: none;
+  }
+
+  .host-shell .host-main {
+    padding-top: clamp(7px, 1.9vh, 14px);
+  }
+
+  .host-shell :is(.lobby-heading, .voting-heading) h1 {
+    font-size: clamp(2.1rem, min(7.5vw, 12.2vh), 5.4rem);
+    line-height: 0.92;
+  }
+
+  .host-shell .lobby-layout {
+    margin-top: clamp(10px, 3vh, 22px);
+  }
+
+  .host-shell .invite-code span {
+    width: clamp(33px, min(12vh, 6.25vw), 77px);
+    font-size: clamp(1.5rem, 9.25vh, 4.5rem);
+  }
+
+  .host-shell .qr {
+    width: clamp(83px, min(24vh, 14vw), 178px);
+  }
+
+  .host-shell .roster-panel .ready-total strong {
+    font: 800 1.18rem var(--mono);
+  }
+
+  .host-shell .roster-avatar .jelly {
+    width: clamp(26px, 8.3vh, 58px);
+  }
+
+  .host-shell .roster-empty .jelly {
+    width: clamp(54px, 17vh, 110px);
+  }
+
+  .host-shell .lobby-actions .primary {
+    min-height: 50px;
+    font-size: clamp(1rem, 2vw, 1.65rem);
+  }
+
+  .host-shell .vote-layout {
+    grid-template-columns: minmax(0, 1fr) clamp(149px, 25vw, 300px);
+  }
+
+  .host-shell .tv-ballot .vote-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(7px, 1.5vh, 13px);
+  }
+
+  .host-shell .tv-ballot .game-card {
+    grid-template-columns: clamp(23px, 5.8vh, 45px) minmax(0, 1fr);
+    align-content: center;
+    align-items: center;
+    min-height: clamp(68px, 18vh, 139px);
+    padding: 6px;
+  }
+
+  .host-shell .tv-ballot .game-card-copy h3 {
+    font-size: clamp(0.85rem, min(2.4vw, 4.5vh), 1.85rem);
+    overflow-wrap: anywhere;
+  }
+
+  .host-shell .tv-ballot .game-card-copy span {
+    font-size: clamp(0.45rem, 1.5vh, 0.7rem);
+  }
+
+  .host-shell .tv-ballot .voter-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .host-shell .tv-ballot .voter-badges svg {
+    width: clamp(13px, 3.4vh, 24px);
+  }
+
+  .host-shell .tv-ballot .voter-badges:empty {
+    display: none;
+  }
+
+  .host-shell .leaderboard-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .host-shell .leaderboard[data-crowded="true"] .leaderboard-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .host-shell .leaderboard[data-crowded="true"] .leaderboard-row strong {
+    font-size: clamp(0.65rem, 1.9vh, 0.85rem);
+  }
+
+  .host-shell .leaderboard-row {
+    min-height: clamp(21px, 4.4vh, 34px);
+  }
+
+  .host-shell .leaderboard-row strong {
+    font-size: clamp(0.75rem, 2.5vh, 1rem);
+  }
+
+  .host-shell .leaderboard-row .jelly {
+    width: clamp(14px, 3.6vh, 24px);
+  }
+
+  .host-shell .leaderboard-row b {
+    font-size: 0.82rem;
+  }
+
+  .host-shell .active-game-title h1 {
+    font-size: clamp(1.65rem, 7.5vh, 4.3rem);
+  }
+
+  .host-shell .active-game-title .game-card-icon {
+    width: clamp(37px, 10vh, 66px);
+    height: clamp(37px, 10vh, 66px);
+  }
+
+  .host-shell .spotify-now-playing {
+    width: clamp(93px, 17vw, 230px);
+    max-width: clamp(93px, 17vw, 230px);
+  }
+}
+
+@media (max-width: 740px) {
+  .hero h1 {
+    font-size: clamp(3.8rem, 14vw, 6.8rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase-wipe {
+    display: none;
+  }
+
+  .tv-ballot .vote-grid,
+  .roulette-card .game-card,
+  .spotify-now-playing strong[data-scroll="true"] {
+    animation: none;
+  }
+
+  .spotify-now-playing strong {
+    width: 100%;
+    text-overflow: ellipsis;
+  }
+}

@@ -4,6 +4,7 @@ import "./globals.css";
 import "./sketchbook.css";
 import "./tv-fit.css";
 import "./showtime.css";
+import "./party-stage.css";
 
 export const metadata: Metadata = {
   title: "Dash Arcade | TV Party Hub",
@@ -23,7 +24,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#242047",
+  themeColor: "#172454",
   viewportFit: "cover",
 };
 
