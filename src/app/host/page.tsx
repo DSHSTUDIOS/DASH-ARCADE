@@ -30,8 +30,7 @@ import BootSplash from "@/components/BootSplash";
 import Credits from "@/components/Credits";
 import { useTVRemote } from "@/hooks/useTVRemote";
 import HostAudio from "@/components/HostAudio";
-import JamInviteForm from "@/components/JamInviteForm";
-import { spotifyInvite, spotifyTop100, spotifyGlobal50 } from "@/lib/spotifyJam";
+import { spotifyInvite } from "@/lib/spotifyJam";
 import JellyAvatar from "@/components/JellyAvatar";
 import { registry } from "@/games/registry";
 import { gameColor, secondsLeft } from "@/games/types";
@@ -108,10 +107,23 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
   const [jamOpen, setJamOpen] = useState(false);
   const [jamProposal, setJamProposal] = useState<{ player: string; url: string }>();
   const jamUrl = spotifyInvite(state.spotifyJam);
+  const jamQrTarget = jamUrl || (joinUrl && `${joinUrl}&music=spotify`);
+  const [jamQr, setJamQr] = useState<{ url: string; image: string }>();
+  useEffect(() => {
+    if (!jamOpen || !jamQrTarget) return;
+    let cancelled = false;
+    void QRCode.toDataURL(jamQrTarget, { width: 360, margin: 4 })
+      .then((image) => {
+        if (!cancelled) setJamQr({ url: jamQrTarget, image });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [jamOpen, jamQrTarget]);
   function shareJam(url?: string) {
     commit({ ...latest.current, spotifyJam: url });
     setJamProposal(undefined);
-    setJamOpen(false);
   }
   const latest = useRef(state);
   const connected = useRef(online);
@@ -159,7 +171,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     setState(next);
   }
 
-  useTVRemote(jamOpen ? "SPOTIFY" : state.phase + endConfirm, () => {
+  useTVRemote(jamOpen ? `SPOTIFY-${Boolean(jamUrl)}` : state.phase + endConfirm, () => {
     if (jamOpen) {
       setJamOpen(false);
       return true;
@@ -239,14 +251,18 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     {
       onAction(player, epoch, action) {
         const current = latest.current;
-        if (current.epoch !== epoch || !connected.current.includes(player))
-          return;
         if (action.type === "spotify-jam-invite") {
           const url = spotifyInvite(action.value);
-          if (url && url !== current.spotifyJam)
+          if (
+            url &&
+            url !== current.spotifyJam &&
+            current.players.some((member) => member.id === player)
+          ) {
             setJamProposal((pending) => pending ?? { player, url });
+          }
           return;
         }
+        if (current.epoch !== epoch || !connected.current.includes(player)) return;
         if (
           current.phase === "VOTING" &&
           Date.now() < current.deadline &&
@@ -701,31 +717,46 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 Back to arcade
               </button>
             </div>
-            {jamUrl ? (
-              <>
-                <p>Players can join from their phones and add songs in Spotify. The arcade soundtrack is paused.</p>
-                <button className="secondary" onClick={() => shareJam()}>
-                  Remove invite and resume arcade music
-                </button>
-              </>
-            ) : (
-              <p>Start a Jam in Spotify Premium and choose a speaker or Bluetooth device. Copy the invite here, or send it from a ready player’s phone.</p>
-            )}
-            {jamProposal && (
-              <div className="jam-approval">
-                <p>{state.players.find((player) => player.id === jamProposal.player)?.name ?? "A player"} shared a Spotify invite.</p>
-                <button className="primary" onClick={() => shareJam(jamProposal.url)}>
-                  Share invite with this room
-                </button>
-                <button className="subtle" onClick={() => setJamProposal(undefined)}>
-                  Dismiss
-                </button>
+            <div className="jam-scan">
+              <div className="jam-qr">
+                {jamQrTarget && jamQr?.url === jamQrTarget && (
+                  <img
+                    src={jamQr.image}
+                    alt={jamUrl ? "QR code to join Spotify Jam" : "QR code to set up Spotify Jam on your phone"}
+                    width={360}
+                    height={360}
+                  />
+                )}
               </div>
-            )}
-            <JamInviteForm submitLabel={jamUrl ? "Replace invite" : "Share invite"} onInvite={shareJam} />
-            <div className="actions">
-              <a className="secondary" href={spotifyTop100} target="_blank" rel="noreferrer">Top 100 all-time</a>
-              <a className="subtle" href={spotifyGlobal50} target="_blank" rel="noreferrer">Today’s Global Top 50</a>
+              <div className="jam-approval">
+                {jamUrl ? (
+                  <>
+                    <h3>Scan to join the queue</h3>
+                    <p>Open the QR code with your phone camera, then add songs in Spotify.</p>
+                    <button className="secondary" onClick={() => shareJam()}>
+                      Remove invite and resume arcade music
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <h3>Send an invite from your phone</h3>
+                    <p>Start a Jam in Spotify Premium and copy its share link. Scan this code and paste the link on your phone.</p>
+                  </>
+                )}
+                {jamProposal && (
+                  <>
+                    <p>{state.players.find((player) => player.id === jamProposal.player)?.name ?? "A player"} sent a Jam invite.</p>
+                    <div className="actions">
+                      <button className="primary" onClick={() => shareJam(jamProposal.url)}>
+                        Share invite with this room
+                      </button>
+                      <button className="subtle" onClick={() => setJamProposal(undefined)}>
+                        Dismiss
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </section>
         </div>

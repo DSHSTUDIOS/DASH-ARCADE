@@ -1,4 +1,4 @@
-name: Publish Dash Arcade v2.0.1
+name: Publish Dash Arcade v2.0.2
 
 on:
   push:
@@ -19,18 +19,18 @@ jobs:
       - name: Assemble the signed APK and verify its checksum
         run: |
           node scripts/extract-preview-apk.mjs
-          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.0.1.apk
+          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.0.2.apk
       - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           ARCADE_RELEASE_COMMIT: ${{ github.sha }}
         run: |
-          if gh release view v2.0.1 > /dev/null 2>&1; then
-            gh release download v2.0.1 --pattern Dash-Arcade-v2.0.1.apk --output existing.apk
-            cmp existing.apk Dash-Arcade-v2.0.1.apk
+          if gh release view v2.0.2 > /dev/null 2>&1; then
+            gh release download v2.0.2 --pattern Dash-Arcade-v2.0.2.apk --output existing.apk
+            cmp existing.apk Dash-Arcade-v2.0.2.apk
             exit
           fi
-          gh release create v2.0.1 Dash-Arcade-v2.0.1.apk \
+          gh release create v2.0.2 Dash-Arcade-v2.0.2.apk \
             --target "$ARCADE_RELEASE_COMMIT" \
-            --title "Dash Arcade v2.0.1" \
-            --notes "Dash Arcade v2.0.1 fits compact TV viewports, lets Right and Left cycle through controls, starts automatically when the lobby is ready, rotates six built-in tracks, and shares a Spotify Jam with the room so guests can add tracks to the queue in Spotify. The debug-signed APK connects to the public multiplayer site. See the setup guide for TV installation."
+            --title "Dash Arcade v2.0.2" \
+            --notes "Dash Arcade v2.0.2 puts Spotify Jam setup and guest invites on the TV as scannable QR codes. Paste the Jam link on your phone, then approve it with the TV remote. See the setup guide for TV installation."

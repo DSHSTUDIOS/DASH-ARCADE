@@ -2770,3 +2770,39 @@ input[type="color"] {
 .phone-jam .jam-form {
   margin-top: 8px;
 }
+
+.jam-scan {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.jam-qr {
+  aspect-ratio: 1;
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.jam-qr img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.jam-approval h3 {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .jam-scan {
+    grid-template-columns: 1fr;
+  }
+
+  .jam-qr {
+    width: min(190px, 100%);
+    justify-self: center;
+  }
+}

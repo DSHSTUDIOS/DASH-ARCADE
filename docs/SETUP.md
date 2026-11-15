@@ -142,10 +142,11 @@ If your TV can read USB storage and allows APK installation from a file manager:
 
 ## Shared Spotify queue
 
-1. On a phone, open the **Top 100 all-time** community playlist or Spotify’s daily **Global Top 50** from the controller’s **Spotify Jam** section, or pick your own songs in Spotify.
-2. In Spotify, start a **Jam** from that playlist and choose an available speaker. To keep the game on the TV, use another speaker, such as one connected to your phone by Bluetooth or Spotify Connect.
-3. In Spotify, choose **Invite → Share link**, then paste the link into the ready controller’s **Spotify Jam** section and tap **Send invite to the TV**. The host can also paste directly into **Party music → Spotify Jam** when hosting in a browser.
-4. On the TV, open **Party music → Spotify Jam → Share invite with this room**. The built-in soundtrack pauses for the rest of the Jam. Guests tap **Join Spotify Jam · Add songs** on their controller, then add tracks to the shared queue inside Spotify.
-5. End the Jam in Spotify and use **Remove invite and resume arcade music** on the host to bring back the built-in soundtrack.
+1. On the TV, open **Party music → Spotify Jam** and scan the setup QR code with your phone camera.
+2. On the phone, open **Top 100 all-time**, **Today’s Global Top 50**, or a playlist you like in Spotify. Start a Jam and choose a speaker connected to Spotify or Bluetooth.
+3. In Spotify, tap **Invite → Share link**. Paste the link on the phone’s Dash Arcade page and tap **Send invite to the TV**.
+4. On the TV, select **Share invite with this room**. The QR code changes to the Spotify invite and the built-in soundtrack pauses.
+5. Guests scan the invite QR code or tap **Join Spotify Jam · Add songs** on their controller. They add tracks to the queue inside Spotify.
+6. End the Jam in Spotify and select **Remove invite and resume arcade music** to restore the built-in soundtrack.
 
 The person starting the Jam needs Spotify Premium. Free Spotify accounts can join and add songs in person. [Spotify’s Jam instructions](https://support.spotify.com/us/article/jam/).
