@@ -1,4 +1,7 @@
 DASH-ARCADE/
+├── .github/
+│   └── workflows/
+│       └── release-v2.yml
 ├── android-tv-manifest/
 │   ├── java/
 │   │   └── com/
@@ -31,6 +34,7 @@ DASH-ARCADE/
 │   │   └── space-mono.woff2
 │   ├── icons/
 │   │   ├── apple-touch-icon.png
+│   │   ├── arcade-logo.svg
 │   │   ├── icon-192.png
 │   │   ├── icon-512.png
 │   │   └── maskable-512.png

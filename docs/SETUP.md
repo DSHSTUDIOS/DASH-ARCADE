@@ -70,11 +70,11 @@ Phone home-screen installation is optional. Each controller needs its own nickna
 
 ## Android APK
 
-The native wrapper targets Android phones and Android TV / Google TV using one APK. The repository's debug download is a build preview. A live game across devices requires a build with your own Supabase values and the public HTTPS arcade origin from [the online setup](#put-the-arcade-online-for-phones).
+The native wrapper targets Android phones and Android TV / Google TV using one APK. The repository's debug-signed APK connects to the [public Dash Arcade multiplayer site](https://dash-arcade.thrivingnacre16.chatgpt.site/) out of the box. To use your own site or Supabase project, set the values from [the online setup](#put-the-arcade-online-for-phones) and build your own APK.
 
-### Extract the preview APK
+### Extract the APK from source
 
-Run `node scripts/extract-preview-apk.mjs` from the repository root. It combines the checked-in parts, checks the SHA-256, and creates `downloads/Dash-Arcade-v2-debug.apk`. Use that path with the install steps below to inspect the app on a device. Use the build steps to create an APK that connects to your deployed arcade.
+Run `node scripts/extract-preview-apk.mjs` from the repository root. It combines the checked-in parts, checks the SHA-256, and creates `downloads/Dash-Arcade-v2-debug.apk`. Use that path with the install steps below. The assembled file matches the hosted multiplayer build.
 
 ### Build
 
@@ -100,7 +100,7 @@ Alternatively, transfer the APK to the phone, open it in the system file manager
 
 ### Install on Google TV or Android TV
 
-**Get the APK onto your computer first.** For a live game with separate phones, [build your configured APK](#build). To try the TV app, [extract the preview APK](#extract-the-preview-apk). The commands below use the configured build's path. For the preview, substitute `downloads/Dash-Arcade-v2-debug.apk`.
+**Get the APK onto your computer first.** [Download the v2 APK from Releases](https://github.com/TwinSailsStudios/DASH-ARCADE/releases), [extract it from source](#extract-the-apk-from-source), or [build it for your own deployment](#build). The commands below use the locally built APK's path. For a release or extracted APK, substitute the path to the file on your computer.
 
 #### Wi-Fi sideload with ADB
 

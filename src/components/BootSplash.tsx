@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gamepad2 } from "./ArcadeIcons";
 import { enableSound, playEffect } from "@/lib/sound";
 
 export default function BootSplash() {
@@ -26,7 +25,7 @@ export default function BootSplash() {
     <div className="boot-splash" aria-label="Dash Arcade startup" role="status">
       <div className="boot-hardware">
         <div className="boot-cartridge">
-          <Gamepad2 size={67} />
+          <img src="/icons/arcade-logo.svg" width={67} height={67} alt="" />
           <div>
             <b>DASH</b>
             <span>ARCADE SYSTEM</span>

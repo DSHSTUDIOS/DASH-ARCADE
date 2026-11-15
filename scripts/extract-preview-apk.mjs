@@ -7,7 +7,7 @@ const buffers = await Promise.all(
   parts.map((part) => readFile(new URL(`preview-apk/part-${part}`, downloads))),
 );
 const apk = Buffer.concat(buffers);
-const expected = "dcb1e9e220895748200bb569eeab454b753e71bed39a789a507ef535a9b730dd";
+const expected = "72ebd51c5c6da0373e2e6118e4d386ef07e941234ca4746cbd6b0080ee12317a";
 if (createHash("sha256").update(apk).digest("hex") !== expected) {
   throw new Error("Preview APK checksum mismatch. Fetch a fresh copy of all parts.");
 }

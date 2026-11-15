@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Crown,
-  Gamepad2,
   Sparkles,
   Trophy,
 } from "@/components/ArcadeIcons";
@@ -24,7 +23,7 @@ export function Brand({ light = false }: { light?: boolean }) {
       data-light={light}
     >
       <span className="brand-icon">
-        <Gamepad2 size={23} strokeWidth={2.5} />
+        <img src="/icons/arcade-logo.svg" width={33} height={33} alt="" />
       </span>
       <span>
         DASH<span className="brand-accent">ARCADE</span>

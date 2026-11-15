@@ -2,7 +2,7 @@
 
 Eleven multiplayer party games for one TV and 2–12 phone controllers, drawn in a crayon-and-pencil sketchbook style. Designed, engineered & built by Pratik Dash.
 
-[Install the APK on your TV](docs/SETUP.md#install-on-google-tv-or-android-tv) · [TV and phone setup guide](docs/SETUP.md) · [Full source tree](FILE-TREE.txt)
+[Install the APK on your TV](docs/SETUP.md#install-on-google-tv-or-android-tv) · [TV and phone setup guide](docs/SETUP.md) · [Play online](https://dash-arcade.thrivingnacre16.chatgpt.site/) · [Full source tree](FILE-TREE.txt)
 
 ![Dash Arcade’s sketchbook landing page](docs/sketchbook-preview.png)
 
@@ -17,7 +17,7 @@ npm run dev
 
 Open [localhost:3000/host](http://localhost:3000/host), then use the lobby invite link in two additional tabs in the same browser profile. Ready up on both tabs to start a game. For a TV and separate phones, [configure HTTPS and Supabase](docs/SETUP.md#put-the-arcade-online-for-phones), then choose the instructions for your [TV](docs/SETUP.md#tv-operating-systems) and [phones](docs/SETUP.md#phone-and-tablet-operating-systems).
 
-Dash Arcade uses Next.js and Supabase Realtime Broadcast and Presence. The TV host owns the room save in localStorage. Web builds include the phone PWA, and one Capacitor APK targets Android phones and Google TV. [Android build and install instructions](docs/SETUP.md#android-apk) · [Extract the preview APK](docs/SETUP.md#extract-the-preview-apk)
+Dash Arcade uses Next.js and Supabase Realtime Broadcast and Presence. The TV host owns the room save in localStorage. Web builds include the phone PWA, and one Capacitor APK targets Android phones and Google TV. [Android build and install instructions](docs/SETUP.md#android-apk) · [APK releases](https://github.com/TwinSailsStudios/DASH-ARCADE/releases) · [Extract the APK from source](docs/SETUP.md#extract-the-apk-from-source)
 
 ## Games
 

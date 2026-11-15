@@ -1,0 +1,36 @@
+name: Publish Dash Arcade v2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/release-v2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'TwinSailsStudios/DASH-ARCADE' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Assemble the signed APK and verify its checksum
+        run: |
+          node scripts/extract-preview-apk.mjs
+          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.apk
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCADE_RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          if gh release view v2.0.0 > /dev/null 2>&1; then
+            gh release download v2.0.0 --pattern Dash-Arcade-v2.apk --output existing.apk
+            cmp existing.apk Dash-Arcade-v2.apk
+            exit
+          fi
+          gh release create v2.0.0 Dash-Arcade-v2.apk \
+            --target "$ARCADE_RELEASE_COMMIT" \
+            --title "Dash Arcade v2" \
+            --notes "Dash Arcade v2 for Android and Google TV, with the new crayon arcade cabinet icon. This debug-signed sideload APK connects to the hosted Dash Arcade multiplayer site. See the repository setup guide for TV installation and custom builds."
