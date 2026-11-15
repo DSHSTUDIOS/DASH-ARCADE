@@ -1,0 +1,111 @@
+DASH-ARCADE/
+├── android-tv-manifest/
+│   ├── java/
+│   │   └── com/
+│   │       └── pratikdash/
+│   │           └── arcade/
+│   │               └── MainActivity.java
+│   ├── res/
+│   │   └── drawable-xhdpi/
+│   │       ├── dash_launcher_icon.png
+│   │       └── dash_tv_banner.png
+│   └── AndroidManifest.xml
+├── docs/
+│   ├── SETUP.md
+│   └── sketchbook-preview.png
+├── downloads/
+│   └── preview-apk/
+│       ├── part-aa
+│       ├── part-ab
+│       ├── part-ac
+│       └── part-ad
+├── public/
+│   ├── fonts/
+│   │   ├── Bricolage-OFL.txt
+│   │   ├── bricolage.woff2
+│   │   ├── DM-Sans-OFL.txt
+│   │   ├── dm-sans.woff2
+│   │   ├── Ojuju-OFL.txt
+│   │   ├── ojuju.woff2
+│   │   ├── Space-Mono-OFL.txt
+│   │   └── space-mono.woff2
+│   ├── icons/
+│   │   ├── apple-touch-icon.png
+│   │   ├── icon-192.png
+│   │   ├── icon-512.png
+│   │   └── maskable-512.png
+│   ├── music/
+│   │   ├── bit-quest.mp3
+│   │   ├── CREDITS.md
+│   │   ├── hyperfun.mp3
+│   │   └── pixel-peeker.mp3
+│   └── sw.js
+├── scripts/
+│   ├── android.mjs
+│   ├── artwork.mjs
+│   ├── export.mjs
+│   └── extract-preview-apk.mjs
+├── src/
+│   ├── app/
+│   │   ├── host/
+│   │   │   └── page.tsx
+│   │   ├── play/
+│   │   │   └── page.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── manifest.ts
+│   │   ├── page.tsx
+│   │   └── sketchbook.css
+│   ├── components/
+│   │   ├── ArcadeIcons.tsx
+│   │   ├── AvatarStudio.tsx
+│   │   ├── BootSplash.tsx
+│   │   ├── Credits.tsx
+│   │   ├── DoodleScene.tsx
+│   │   ├── GameUI.tsx
+│   │   ├── HostAudio.tsx
+│   │   ├── HubUI.tsx
+│   │   ├── InstallPromptModal.tsx
+│   │   ├── JellyAvatar.tsx
+│   │   ├── PwaRegistration.tsx
+│   │   ├── RoomStatus.tsx
+│   │   └── TouchCanvas.tsx
+│   ├── engines/
+│   │   ├── CanvasMashupEngine.tsx
+│   │   ├── DeductionTriviaEngine.tsx
+│   │   └── PromptVoteEngine.tsx
+│   ├── games/
+│   │   ├── bid-brush.tsx
+│   │   ├── board-blitz.tsx
+│   │   ├── cards.ts
+│   │   ├── color-clash.tsx
+│   │   ├── crazy-cards.tsx
+│   │   ├── deduction-games.ts
+│   │   ├── guess-sketch.tsx
+│   │   ├── prompt-games.ts
+│   │   ├── prompts.ts
+│   │   ├── registry.ts
+│   │   ├── tee-ko.ts
+│   │   └── types.ts
+│   ├── hooks/
+│   │   └── useTVRemote.ts
+│   └── lib/
+│       ├── hub.ts
+│       ├── sound.ts
+│       ├── types.ts
+│       ├── useClock.ts
+│       └── usePartyRoom.ts
+├── .env.example
+├── .gitignore
+├── AGENTS.md
+├── capacitor.config.ts
+├── FILE-TREE.txt
+├── LICENSE
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── README.md
+├── tailwind.config.ts
+└── tsconfig.json
