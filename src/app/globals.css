@@ -2806,3 +2806,27 @@ input[type="color"] {
     justify-self: center;
   }
 }
+
+.spotify-tv-controls {
+  display: grid;
+  gap: 6px;
+}
+
+.spotify-now-playing {
+  display: grid;
+  max-width: clamp(125px, 18vw, 260px);
+  min-width: 0;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.spotify-now-playing small {
+  font-size: .7rem;
+}
+
+.spotify-now-playing strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .85rem;
+}

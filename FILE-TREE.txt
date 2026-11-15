@@ -7,7 +7,8 @@ DASH-ARCADE/
 │   │   └── com/
 │   │       └── pratikdash/
 │   │           └── arcade/
-│   │               └── MainActivity.java
+│   │               ├── MainActivity.java
+│   │               └── TvMusicPlugin.java
 │   ├── res/
 │   │   └── drawable-xhdpi/
 │   │       ├── dash_launcher_icon.png
@@ -105,7 +106,8 @@ DASH-ARCADE/
 │       ├── spotifyJam.ts
 │       ├── types.ts
 │       ├── useClock.ts
-│       └── usePartyRoom.ts
+│       ├── usePartyRoom.ts
+│       └── useTvMusic.ts
 ├── .env.example
 ├── .gitignore
 ├── AGENTS.md

@@ -2,6 +2,7 @@
 
 import { Headphones, Volume2, VolumeX } from "@/components/ArcadeIcons";
 import { useEffect, useRef, useState } from "react";
+import { tvMusic, useTvMusic } from "@/lib/useTvMusic";
 import { enableSound, playEffect } from "@/lib/sound";
 import type { HubState } from "@/lib/types";
 
@@ -65,6 +66,17 @@ export default function HostAudio({
   jamPending: boolean;
   jamActive: boolean;
 }) {
+  const { available: spotifyAvailable, playback: spotify } = useTvMusic();
+  const [spotifyError, setSpotifyError] = useState("");
+  const musicSuspended = suspended || Boolean(spotify?.playing);
+  async function spotifyAction(action: "openSpotify" | "openAccessSettings" | "skip") {
+    setSpotifyError("");
+    try {
+      await tvMusic[action]();
+    } catch (error) {
+      setSpotifyError(error instanceof Error ? error.message : "Spotify is unavailable on this TV.");
+    }
+  }
   const [song, setSong] = useState(0);
   const [enabled, setEnabled] = useState(() => {
     try {
@@ -98,7 +110,7 @@ export default function HostAudio({
     const player = audio.current;
     if (!player) return;
     player.volume = 0.16;
-    if (!enabled || suspended) {
+    if (!enabled || musicSuspended) {
       player.pause();
       return;
     }
@@ -124,7 +136,7 @@ export default function HostAudio({
       window.removeEventListener("pointerdown", syncPlayback, true);
       document.removeEventListener("visibilitychange", syncPlayback);
     };
-  }, [enabled, song, suspended]);
+  }, [enabled, song, musicSuspended]);
 
   function advanceTrack(player: HTMLAudioElement) {
     if (
@@ -139,7 +151,7 @@ export default function HostAudio({
 
   function toggleMusic() {
     const player = audio.current;
-    if (!player || suspended) return;
+    if (!player || musicSuspended) return;
     const next = !playing;
     setEnabled(next);
     try {
@@ -179,6 +191,15 @@ export default function HostAudio({
         onPause={() => setPlaying(false)}
         onError={() => setError(true)}
       />
+      {spotify?.title && (
+        <div
+          className="spotify-now-playing"
+          title={[spotify.title, spotify.artist].filter(Boolean).join(" · ")}
+        >
+          <small>{spotify.playing ? "Spotify · Now playing" : "Spotify · Paused"}</small>
+          <strong>{spotify.title}{spotify.artist ? ` · ${spotify.artist}` : ""}</strong>
+        </div>
+      )}
       <details className="music-menu">
         <summary className="icon-button" aria-label="Party music">
           <Headphones size={19} />
@@ -186,6 +207,28 @@ export default function HostAudio({
         </summary>
         <div className="panel music-popover">
           <h3>Party music</h3>
+          {spotifyAvailable && (
+            <div className="spotify-tv-controls">
+              <button className="secondary" onClick={() => void spotifyAction("openSpotify")}>
+                Open Spotify on TV
+              </button>
+              {spotify?.granted === false && (
+                <>
+                  <button className="secondary" onClick={() => void spotifyAction("openAccessSettings")}>
+                    Enable Spotify Now Playing
+                  </button>
+                  <small>Android requires Notification access. Dash Arcade only reads Spotify’s track title and artist through Android media controls.</small>
+                </>
+              )}
+              {spotify?.granted && !spotify.title && <small>Start a song in Spotify to see it here.</small>}
+              {spotify?.canSkip && (
+                <button className="secondary" onClick={() => void spotifyAction("skip")}>
+                  Skip Spotify track
+                </button>
+              )}
+              {spotifyError && <small role="alert">{spotifyError}</small>}
+            </div>
+          )}
           <select
             value={song}
             aria-label="Soundtrack"
@@ -203,7 +246,7 @@ export default function HostAudio({
           <button
             className="secondary"
             onClick={toggleMusic}
-            disabled={suspended}
+            disabled={musicSuspended}
           >
             {playing ? "Pause" : "Play music"}
           </button>

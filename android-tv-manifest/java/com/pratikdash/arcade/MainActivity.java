@@ -21,6 +21,7 @@ public class MainActivity extends BridgeActivity {
         UiModeManager mode = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
         television = mode != null && mode.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
         if (television) setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if (television) registerPlugin(TvMusicPlugin.class);
         super.onCreate(state);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);

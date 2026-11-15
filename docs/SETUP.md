@@ -140,6 +140,14 @@ If your TV can read USB storage and allows APK installation from a file manager:
 4. If a phone can't find the host, check the four letters, verify the host says **Live room**, and make sure the APK and website were built with the same Supabase project. If the QR points to localhost, enter the public `/play` URL and code, then rebuild with `NEXT_PUBLIC_ARCADE_ORIGIN`.
 5. Use **Right** to move to the next TV control and **Left** to go back. Focus wraps at either end. On the TV app, the six-track soundtrack starts and rotates automatically. In a browser, press a key or click the host once if autoplay is blocked. Use **Party music** to pause, skip, pick a track, or share a Spotify Jam (below). Keep the original host open when casting or mirroring.
 
+## Spotify Now Playing on Android TV
+
+1. Open **Party music → Open Spotify on TV** from the Dash Arcade APK. Install Spotify from the TV’s Play Store if prompted. Sign in to Spotify using its TV sign-in flow.
+2. Back in Dash Arcade, use **Party music → Enable Spotify Now Playing**. In Android’s Notification access settings, allow **Dash Arcade Now Playing**.
+3. Play a track in Spotify, or select the TV from Spotify Connect on your phone. Return to Dash Arcade. The title and artist appear in the header while Spotify exposes a media session. **Skip Spotify track** appears in **Party music** when Spotify allows skipping.
+
+Spotify handles playback on the TV. Android notification access lets Dash Arcade query Spotify’s media session. The app reads track details and playback state locally and does not collect notifications or share the track with the room. You can revoke access from Android’s Notification access settings.
+
 ## Shared Spotify queue
 
 1. On the TV, open **Party music → Spotify Jam** and scan the setup QR code with your phone camera.
