@@ -2709,3 +2709,64 @@ input[type="color"] {
   color: var(--text);
   padding: 4px 7px;
 }
+
+.jam-dialog {
+  display: grid;
+  gap: 12px;
+  width: min(640px, 94vw);
+  max-height: 92dvh;
+  overflow: auto;
+  padding: clamp(12px, 2vw, 22px);
+}
+
+.jam-dialog .split,
+.jam-form {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.jam-dialog :is(h2, p),
+.jam-approval p {
+  margin: 0;
+}
+
+.jam-form {
+  display: flex;
+  align-items: end;
+}
+
+.jam-form label {
+  display: grid;
+  gap: 4px;
+  flex: 1 0 min(16rem, 100%);
+}
+
+.jam-form input {
+  width: 100%;
+}
+
+.jam-approval,
+.phone-jam {
+  display: grid;
+  gap: 8px;
+}
+
+.jam-indicator {
+  color: #208d4e;
+  margin-left: 3px;
+}
+
+.phone-jam {
+  margin-top: 12px;
+  padding: 14px;
+}
+
+.phone-jam summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.phone-jam details .actions,
+.phone-jam .jam-form {
+  margin-top: 8px;
+}

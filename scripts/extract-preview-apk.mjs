@@ -2,12 +2,12 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 
 const downloads = new URL("../downloads/", import.meta.url);
-const parts = ["aa", "ab", "ac", "ad"];
+const parts = ["aa", "ab", "ac", "ad", "ae"];
 const buffers = await Promise.all(
   parts.map((part) => readFile(new URL(`preview-apk/part-${part}`, downloads))),
 );
 const apk = Buffer.concat(buffers);
-const expected = "72ebd51c5c6da0373e2e6118e4d386ef07e941234ca4746cbd6b0080ee12317a";
+const expected = "9394c19581d2daffdf3f5683849281f2ab1a885b5b19add49e82684633adf12e";
 if (createHash("sha256").update(apk).digest("hex") !== expected) {
   throw new Error("Preview APK checksum mismatch. Fetch a fresh copy of all parts.");
 }

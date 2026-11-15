@@ -15,7 +15,7 @@ import {
 } from "@/components/ArcadeIcons";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Brand,
   Leaderboard,
@@ -30,6 +30,8 @@ import BootSplash from "@/components/BootSplash";
 import Credits from "@/components/Credits";
 import { useTVRemote } from "@/hooks/useTVRemote";
 import HostAudio from "@/components/HostAudio";
+import JamInviteForm from "@/components/JamInviteForm";
+import { spotifyInvite, spotifyTop100, spotifyGlobal50 } from "@/lib/spotifyJam";
 import JellyAvatar from "@/components/JellyAvatar";
 import { registry } from "@/games/registry";
 import { gameColor, secondsLeft } from "@/games/types";
@@ -103,6 +105,14 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
   const [qr, setQr] = useState("");
   const [saveProblem, setSaveProblem] = useState(false);
   const [endConfirm, setEndConfirm] = useState(false);
+  const [jamOpen, setJamOpen] = useState(false);
+  const [jamProposal, setJamProposal] = useState<{ player: string; url: string }>();
+  const jamUrl = spotifyInvite(state.spotifyJam);
+  function shareJam(url?: string) {
+    commit({ ...latest.current, spotifyJam: url });
+    setJamProposal(undefined);
+    setJamOpen(false);
+  }
   const latest = useRef(state);
   const connected = useRef(online);
   const dirty = useRef(true);
@@ -110,7 +120,35 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
   const canvasRelay = useRef<ReturnType<typeof usePartyRoom>["relayCanvas"]>(
     () => {},
   );
-  const now = useClock(120);
+  const [autoStartAt, setAutoStartAt] = useState(0);
+  const now = useClock(
+    state.phase === "ROULETTE" ? 90 : 250,
+    state.phase === "ROULETTE" ||
+      state.phase === "VOTING" ||
+      state.phase === "GAME" ||
+      autoStartAt > 0,
+  );
+  const readyRoster = online.join(",");
+  const allLobbyPlayersReady =
+    online.length >= 2 && state.players.every((player) => player.ready);
+  useEffect(() => {
+    if (state.phase !== "LOBBY" || endConfirm || !allLobbyPlayersReady) {
+      setAutoStartAt(0);
+      return;
+    }
+    const timer = setTimeout(() => {
+      const current = latest.current;
+      if (
+        current.phase === "LOBBY" &&
+        connected.current.length >= 2 &&
+        current.players.every((player) => player.ready)
+      ) {
+        commit(voting(current, Date.now()));
+      }
+    }, 3000);
+    setAutoStartAt(Date.now() + 3000);
+    return () => clearTimeout(timer);
+  }, [state.phase, endConfirm, allLobbyPlayersReady, readyRoster]);
   const code = state.code;
 
   function commit(next: HubState, onlyCanvas = false) {
@@ -121,7 +159,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     setState(next);
   }
 
-  useTVRemote(state.phase + endConfirm, () => {
+  useTVRemote(jamOpen ? "SPOTIFY" : state.phase + endConfirm, () => {
+    if (jamOpen) {
+      setJamOpen(false);
+      return true;
+    }
     if (endConfirm) {
       setEndConfirm(false);
       return true;
@@ -199,6 +241,12 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
         const current = latest.current;
         if (current.epoch !== epoch || !connected.current.includes(player))
           return;
+        if (action.type === "spotify-jam-invite") {
+          const url = spotifyInvite(action.value);
+          if (url && url !== current.spotifyJam)
+            setJamProposal((pending) => pending ?? { player, url });
+          return;
+        }
         if (
           current.phase === "VOTING" &&
           Date.now() < current.deadline &&
@@ -361,7 +409,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     }
   }, [joinUrl]);
 
-  const room = toView(state, online);
+  const room = useMemo(() => toView(state, online), [state, online]);
   const voters = online.filter((pid) => state.votes[pid]).length;
   const eligible =
     state.phase === "LOBBY"
@@ -390,6 +438,10 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           </span>
           <RoomStatus status={status} />
           <HostAudio
+            suspended={Boolean(jamUrl) || state.phase === "CREDITS"}
+            onOpenJam={() => setJamOpen(true)}
+            jamPending={Boolean(jamProposal)}
+            jamActive={Boolean(jamUrl)}
             muted={muted}
             onMute={() => setMuted((value) => !value)}
             sound={state.sound}
@@ -536,7 +588,13 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 >
                   Start Game Night <ArrowRight size={19} />
                 </button>
-                {online.length < 2 && <small>2 ready players needed</small>}
+                <small role="status" className="lobby-status">
+                  {autoStartAt && now
+                    ? `Starting in ${Math.min(3, Math.max(1, secondsLeft(autoStartAt, now)))}…`
+                    : online.length < 2
+                      ? "2 ready players needed"
+                      : ""}
+                </small>
               </div>
             </div>
           </>
@@ -623,6 +681,55 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           />
         )}
       </main>
+      {jamOpen && (
+        <div className="dialog-backdrop" onClick={() => setJamOpen(false)}>
+          <section
+            className="panel jam-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="jam-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="split">
+              <h2 id="jam-title">Spotify Jam</h2>
+              <button
+                className="secondary"
+                data-tv-default
+                autoFocus
+                onClick={() => setJamOpen(false)}
+              >
+                Back to arcade
+              </button>
+            </div>
+            {jamUrl ? (
+              <>
+                <p>Players can join from their phones and add songs in Spotify. The arcade soundtrack is paused.</p>
+                <button className="secondary" onClick={() => shareJam()}>
+                  Remove invite and resume arcade music
+                </button>
+              </>
+            ) : (
+              <p>Start a Jam in Spotify Premium and choose a speaker or Bluetooth device. Copy the invite here, or send it from a ready player’s phone.</p>
+            )}
+            {jamProposal && (
+              <div className="jam-approval">
+                <p>{state.players.find((player) => player.id === jamProposal.player)?.name ?? "A player"} shared a Spotify invite.</p>
+                <button className="primary" onClick={() => shareJam(jamProposal.url)}>
+                  Share invite with this room
+                </button>
+                <button className="subtle" onClick={() => setJamProposal(undefined)}>
+                  Dismiss
+                </button>
+              </div>
+            )}
+            <JamInviteForm submitLabel={jamUrl ? "Replace invite" : "Share invite"} onInvite={shareJam} />
+            <div className="actions">
+              <a className="secondary" href={spotifyTop100} target="_blank" rel="noreferrer">Top 100 all-time</a>
+              <a className="subtle" href={spotifyGlobal50} target="_blank" rel="noreferrer">Today’s Global Top 50</a>
+            </div>
+          </section>
+        </div>
+      )}
       {endConfirm && (
         <div className="dialog-backdrop" onClick={() => setEndConfirm(false)}>
           <div

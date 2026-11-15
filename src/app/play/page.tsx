@@ -15,6 +15,8 @@ import BootSplash from "@/components/BootSplash";
 import InstallPromptModal from "@/components/InstallPromptModal";
 import AvatarStudio from "@/components/AvatarStudio";
 import JellyAvatar from "@/components/JellyAvatar";
+import JamInviteForm from "@/components/JamInviteForm";
+import { spotifyInvite, spotifyTop100, spotifyGlobal50 } from "@/lib/spotifyJam";
 import {
   Brand,
   ModuleLabel,
@@ -236,6 +238,7 @@ function Controller({
   onLeave: () => void;
 }) {
   const [room, setRoom] = useState<HubView>();
+  const [inviteSent, setInviteSent] = useState(false);
   const [hostOffset, setHostOffset] = useState(0);
   const [ink, setInk] = useState<{ key: string; strokes: Stroke[] }>();
   const inkRef = useRef<{ key: string; strokes: Stroke[] } | undefined>(
@@ -276,6 +279,7 @@ function Controller({
     sendAction(room.epoch, { type, value });
   };
   const game = room?.game && registry[room.game.id];
+  const jamUrl = spotifyInvite(room?.spotifyJam);
   return (
     <>
       <div className="phone-meta">
@@ -413,6 +417,32 @@ function Controller({
             </section>
           )}
         </>
+      )}
+      {active && (
+        <section className="panel phone-jam">
+          {jamUrl && (
+            <a className="primary" href={jamUrl} target="_blank" rel="noreferrer">
+              Join Spotify Jam · Add songs
+            </a>
+          )}
+          <details>
+            <summary>{jamUrl ? "Spotify playlists" : "Spotify Jam"}</summary>
+            <div className="actions">
+              <a className="secondary" href={spotifyTop100} target="_blank" rel="noreferrer">Top 100 all-time</a>
+              <a className="subtle" href={spotifyGlobal50} target="_blank" rel="noreferrer">Today’s Global Top 50</a>
+            </div>
+            {(!jamUrl || inviteSent) && (
+              <JamInviteForm
+                submitLabel="Send invite to the TV"
+                onInvite={(url) => {
+                  send("spotify-jam-invite", url);
+                  setInviteSent(true);
+                }}
+              />
+            )}
+            {inviteSent && !jamUrl && <small role="status">The host can approve the invite from Party music.</small>}
+          </details>
+        </section>
       )}
     </>
   );

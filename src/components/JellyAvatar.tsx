@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { memo, useId } from "react";
 import type { AvatarConfig } from "@/lib/types";
 
 export type Reaction = "idle" | "happy" | "shocked" | "winner";
@@ -119,7 +119,7 @@ const mouths = [
   "M38 56 Q50 76 62 56 Z",
 ];
 
-export default function JellyAvatar({
+function JellyAvatar({
   shapeId,
   color,
   expressionId,
@@ -211,6 +211,7 @@ export default function JellyAvatar({
           fill={color}
           stroke="#30253b"
           strokeWidth="2.4"
+          className="jelly-ink"
           filter={`url(#${id}pencil)`}
         />
         <g clipPath={`url(#${id}clip)`}>
@@ -357,3 +358,5 @@ export default function JellyAvatar({
     </svg>
   );
 }
+
+export default memo(JellyAvatar);

@@ -21,7 +21,8 @@ DASH-ARCADE/
 │       ├── part-aa
 │       ├── part-ab
 │       ├── part-ac
-│       └── part-ad
+│       ├── part-ad
+│       └── part-ae
 ├── public/
 │   ├── fonts/
 │   │   ├── Bricolage-OFL.txt
@@ -41,7 +42,10 @@ DASH-ARCADE/
 │   ├── music/
 │   │   ├── bit-quest.mp3
 │   │   ├── CREDITS.md
+│   │   ├── electrodoodle.mp3
+│   │   ├── fluffing-a-duck.mp3
 │   │   ├── hyperfun.mp3
+│   │   ├── pinball-spring-160.mp3
 │   │   └── pixel-peeker.mp3
 │   └── sw.js
 ├── scripts/
@@ -59,7 +63,8 @@ DASH-ARCADE/
 │   │   ├── layout.tsx
 │   │   ├── manifest.ts
 │   │   ├── page.tsx
-│   │   └── sketchbook.css
+│   │   ├── sketchbook.css
+│   │   └── tv-fit.css
 │   ├── components/
 │   │   ├── ArcadeIcons.tsx
 │   │   ├── AvatarStudio.tsx
@@ -68,6 +73,7 @@ DASH-ARCADE/
 │   │   ├── DoodleScene.tsx
 │   │   ├── GameUI.tsx
 │   │   ├── HostAudio.tsx
+│   │   ├── JamInviteForm.tsx
 │   │   ├── HubUI.tsx
 │   │   ├── InstallPromptModal.tsx
 │   │   ├── JellyAvatar.tsx
@@ -96,6 +102,7 @@ DASH-ARCADE/
 │   └── lib/
 │       ├── hub.ts
 │       ├── sound.ts
+│       ├── spotifyJam.ts
 │       ├── types.ts
 │       ├── useClock.ts
 │       └── usePartyRoom.ts

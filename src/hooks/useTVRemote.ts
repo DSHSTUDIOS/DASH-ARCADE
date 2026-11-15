@@ -3,12 +3,7 @@
 import { useEffect, useRef } from "react";
 import { enableSound } from "@/lib/sound";
 
-const arrows: Record<string, [number, number]> = {
-  ArrowUp: [0, -1],
-  ArrowDown: [0, 1],
-  ArrowLeft: [-1, 0],
-  ArrowRight: [1, 0],
-};
+const vertical: Record<string, number> = { ArrowUp: -1, ArrowDown: 1 };
 const numbered: Record<number, string> = {
   4: "Back",
   19: "ArrowUp",
@@ -31,6 +26,7 @@ function targets() {
           el.tabIndex >= 0 &&
           el.getClientRects().length &&
           !el.closest("[inert],[hidden]") &&
+          (!el.closest("details:not([open])") || el.tagName === "SUMMARY") &&
           getComputedStyle(el).visibility !== "hidden",
       )
     : [];
@@ -44,7 +40,7 @@ function focus(target: HTMLElement | undefined) {
   target.scrollIntoView({
     block: "nearest",
     inline: "nearest",
-    behavior: "instant",
+    behavior: "auto",
   });
 }
 
@@ -85,9 +81,12 @@ export function useTVRemote(
         if (back.current()) event.preventDefault();
         return;
       }
-      const direction = arrows[key];
+      const horizontal =
+        key === "ArrowRight" ? 1 : key === "ArrowLeft" ? -1 : 0;
+      const dy = vertical[key];
       if (
-        !direction &&
+        !horizontal &&
+        !dy &&
         !["Enter", "DPadCenter", "DPAD_CENTER", "Accept", "Select"].includes(
           key,
         )
@@ -96,12 +95,25 @@ export function useTVRemote(
       used.current = true;
       const list = targets();
       const active = document.activeElement as HTMLElement | null;
-      if (!active || !list.includes(active)) {
+      if (!list.length) return;
+      const index = active ? list.indexOf(active) : -1;
+      if (horizontal) {
+        event.preventDefault();
+        const next =
+          index < 0
+            ? horizontal === 1
+              ? 0
+              : list.length - 1
+            : (index + horizontal + list.length) % list.length;
+        focus(list[next]);
+        return;
+      }
+      if (!active || index < 0) {
         event.preventDefault();
         focus(defaultTarget(list));
         return;
       }
-      if (!direction) {
+      if (!dy) {
         if (
           !event.repeat &&
           !["SELECT", "INPUT", "TEXTAREA"].includes(active.tagName)
@@ -111,27 +123,32 @@ export function useTVRemote(
         }
         return;
       }
-      if (
-        ["SELECT", "INPUT", "TEXTAREA"].includes(active.tagName) &&
-        direction[1]
-      )
-        return;
+      if (["SELECT", "INPUT", "TEXTAREA"].includes(active.tagName)) return;
       event.preventDefault();
       const rect = active.getBoundingClientRect();
-      const [dx, dy] = direction;
       const candidates = list
         .flatMap((el) => {
           if (el === active) return [];
           const bounds = el.getBoundingClientRect();
           const x = (bounds.left + bounds.right - rect.left - rect.right) / 2;
           const y = (bounds.top + bounds.bottom - rect.top - rect.bottom) / 2;
-          const distance = x * dx + y * dy;
+          const distance = y * dy;
           if (distance <= 3) return [];
-          const offset = Math.abs(x * dy - y * dx);
+          const offset = Math.abs(x);
           return [{ el, weight: distance + offset * 2.25 }];
         })
         .sort((a, b) => a.weight - b.weight);
-      focus(candidates[0]?.el);
+      const next = candidates[0]?.el;
+      if (next) focus(next);
+      else if (dy) {
+        const main = document.querySelector<HTMLElement>(".host-main");
+        if (main && main.scrollHeight > main.clientHeight) {
+          main.scrollBy({
+            top: dy * main.clientHeight * 0.7,
+            behavior: "auto",
+          });
+        }
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

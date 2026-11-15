@@ -46,6 +46,7 @@ export type HubView = {
   epoch: number;
   deadline: number;
   sentAt?: number;
+  spotifyJam?: string;
   players: Player[];
   online: string[];
   points: Record<string, number>;

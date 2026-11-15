@@ -24,25 +24,61 @@ export const tracks = [
     source:
       "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400038",
   },
+  {
+    title: "Electrodoodle",
+    file: "/music/electrodoodle.mp3",
+    source:
+      "https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1200079",
+  },
+  {
+    title: "Pinball Spring 160",
+    file: "/music/pinball-spring-160.mp3",
+    source:
+      "https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1100742",
+  },
+  {
+    title: "Fluffing a Duck",
+    file: "/music/fluffing-a-duck.mp3",
+    source:
+      "https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1100768",
+  },
 ];
+
+const musicPreference = "dash-arcade-music";
 
 export default function HostAudio({
   sound,
   countdown,
   muted,
   onMute,
+  suspended,
+  onOpenJam,
+  jamPending,
+  jamActive,
 }: {
   sound?: HubState["sound"];
   countdown: number;
   muted: boolean;
   onMute: () => void;
+  suspended: boolean;
+  onOpenJam: () => void;
+  jamPending: boolean;
+  jamActive: boolean;
 }) {
   const [song, setSong] = useState(0);
+  const [enabled, setEnabled] = useState(() => {
+    try {
+      return localStorage.getItem(musicPreference) !== "paused";
+    } catch {
+      return true;
+    }
+  });
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState(false);
   const soundId = useRef<number | undefined>(undefined);
   const lastTick = useRef(0);
   const audio = useRef<HTMLAudioElement>(null);
+  const advancedTrack = useRef<number | undefined>(undefined);
   useEffect(() => {
     if (sound && soundId.current !== sound.id && !muted)
       playEffect(sound.effect);
@@ -59,16 +95,63 @@ export default function HostAudio({
     lastTick.current = countdown;
   }, [countdown, muted]);
   useEffect(() => {
-    if (audio.current) audio.current.volume = 0.22;
-  }, []);
-  function toggleMusic() {
     const player = audio.current;
     if (!player) return;
-    enableSound();
-    if (player.paused) {
+    player.volume = 0.16;
+    if (!enabled || suspended) {
+      player.pause();
+      return;
+    }
+    function syncPlayback() {
+      if (!player) return;
+      if (document.hidden) player.pause();
+      else if (player.paused)
+        void player.play().catch((reason) => {
+          if (
+            reason instanceof DOMException &&
+            ["NotAllowedError", "AbortError"].includes(reason.name)
+          )
+            return;
+          setError(true);
+        });
+    }
+    syncPlayback();
+    window.addEventListener("keydown", syncPlayback, true);
+    window.addEventListener("pointerdown", syncPlayback, true);
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      window.removeEventListener("keydown", syncPlayback, true);
+      window.removeEventListener("pointerdown", syncPlayback, true);
+      document.removeEventListener("visibilitychange", syncPlayback);
+    };
+  }, [enabled, song, suspended]);
+
+  function advanceTrack(player: HTMLAudioElement) {
+    if (
+      advancedTrack.current === song ||
+      !player.currentSrc.endsWith(tracks[song].file)
+    )
+      return;
+    advancedTrack.current = song;
+    setError(false);
+    setSong((index) => (index + 1) % tracks.length);
+  }
+
+  function toggleMusic() {
+    const player = audio.current;
+    if (!player || suspended) return;
+    const next = !playing;
+    setEnabled(next);
+    try {
+      localStorage.setItem(musicPreference, next ? "playing" : "paused");
+    } catch {
+      /* Playback still works without storage. */
+    }
+    if (!next) player.pause();
+    else {
       setError(false);
       void player.play().catch(() => setError(true));
-    } else player.pause();
+    }
   }
   return (
     <div className="audio-controls">
@@ -76,7 +159,21 @@ export default function HostAudio({
         ref={audio}
         src={tracks[song].file}
         muted={muted}
-        loop
+        onLoadedMetadata={() => {
+          advancedTrack.current = undefined;
+        }}
+        onEnded={(event) => advanceTrack(event.currentTarget)}
+        onTimeUpdate={(event) => {
+          const player = event.currentTarget;
+          if (
+            !player.paused &&
+            !player.seeking &&
+            Number.isFinite(player.duration) &&
+            player.duration > 1 &&
+            player.duration - player.currentTime < 0.07
+          )
+            advanceTrack(player);
+        }}
         preload="none"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
@@ -85,6 +182,7 @@ export default function HostAudio({
       <details className="music-menu">
         <summary className="icon-button" aria-label="Party music">
           <Headphones size={19} />
+          {jamPending && <b className="jam-indicator" aria-label="Spotify invite waiting">•</b>}
         </summary>
         <div className="panel music-popover">
           <h3>Party music</h3>
@@ -92,14 +190,8 @@ export default function HostAudio({
             value={song}
             aria-label="Soundtrack"
             onChange={(e) => {
-              const next = Number(e.target.value),
-                player = audio.current;
-              setSong(next);
+              setSong(Number(e.target.value));
               setError(false);
-              if (player && !player.paused) {
-                player.src = tracks[next].file;
-                void player.play().catch(() => setError(true));
-              }
             }}
           >
             {tracks.map(({ title }, index) => (
@@ -108,8 +200,30 @@ export default function HostAudio({
               </option>
             ))}
           </select>
-          <button className="secondary" onClick={toggleMusic}>
+          <button
+            className="secondary"
+            onClick={toggleMusic}
+            disabled={suspended}
+          >
             {playing ? "Pause" : "Play music"}
+          </button>
+          <button
+            className="subtle"
+            onClick={() => {
+              setError(false);
+              setSong((value) => (value + 1) % tracks.length);
+            }}
+          >
+            Next track
+          </button>
+          <button
+            className="secondary"
+            onClick={(event) => {
+              event.currentTarget.closest("details")?.removeAttribute("open");
+              onOpenJam();
+            }}
+          >
+            {jamPending ? "Spotify Jam · Invite waiting" : jamActive ? "Spotify Jam · On" : "Spotify Jam"}
           </button>
           {error && <small>Track couldn’t play. Try another selection.</small>}
           <small>

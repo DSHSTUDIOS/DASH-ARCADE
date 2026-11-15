@@ -34,6 +34,7 @@ public class MainActivity extends BridgeActivity {
             String screen = television ? "host" : "play";
             String start = origin + "/" + screen + "/index.html";
             if (savedPage != null && savedPage.startsWith(origin + "/")) start = savedPage;
+            if (television) getBridge().getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
             getBridge().getWebView().loadUrl(start);
         }
     }

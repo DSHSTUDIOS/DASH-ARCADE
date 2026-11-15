@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import PwaRegistration from "@/components/PwaRegistration";
 import "./globals.css";
 import "./sketchbook.css";
+import "./tv-fit.css";
 
 export const metadata: Metadata = {
   title: "Dash Arcade | TV Party Hub",

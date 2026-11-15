@@ -1,0 +1,391 @@
+/* Keep the frame and navigation inside the television's usable picture. */
+body:has(.host-shell)::after {
+  display: none;
+}
+
+.host-shell .jelly-ink {
+  filter: none;
+}
+
+.host-shell
+  :is(.roster-grid, .voter-badges, .leaderboard, .game-sidebar, .jelly-parade)
+  :is(.jelly-body, .jelly-eyes) {
+  animation: none;
+}
+
+.host-shell .vote-avatar {
+  animation-duration: 160ms;
+}
+
+.host-shell .lobby-status {
+  min-height: 1.3em;
+}
+
+@media (orientation: landscape) and (min-width: 600px) and (max-height: 780px) {
+  body:has(.host-shell) {
+    overflow: hidden;
+  }
+
+  .host-shell.page-shell {
+    width: min(1380px, calc(100% - clamp(24px, 5vw, 76px)));
+    height: calc(100dvh - clamp(12px, 4vh, 32px));
+    min-height: 0;
+    margin-block: clamp(6px, 2vh, 16px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .host-shell .topbar {
+    flex: 0 0 auto;
+    gap: 8px;
+    min-height: 0;
+    height: auto;
+    padding: 2px 3px 9px;
+  }
+
+  .host-shell .host-brand {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: 9px;
+  }
+
+  .host-shell .brand {
+    font-size: clamp(0.9rem, 2.1vw, 1.28rem);
+  }
+
+  .host-shell .brand-icon {
+    width: clamp(28px, 6.3vh, 41px);
+    height: clamp(28px, 6.3vh, 41px);
+  }
+
+  .host-shell .brand-icon img {
+    width: 84%;
+    height: 84%;
+  }
+
+  .host-shell .signature {
+    white-space: nowrap;
+  }
+
+  .host-shell .topbar-right {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .host-shell .topbar :is(.icon-button, .secondary) {
+    min-height: clamp(31px, 7vh, 40px);
+  }
+
+  .host-shell .topbar .icon-button {
+    width: clamp(30px, 7vh, 42px);
+    height: clamp(30px, 7vh, 42px);
+  }
+
+  .host-shell .topbar .secondary {
+    padding: 4px 9px;
+    font-size: 0.85rem;
+  }
+
+  .host-shell .host-main {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: clamp(9px, 2.6vh, 20px) 7px 9px;
+    scrollbar-width: thin;
+    scrollbar-color: #c999a7 transparent;
+    scroll-padding-block: 8px;
+    scroll-behavior: auto;
+  }
+
+  .host-shell .host-main :is(button, a, select, summary, input) {
+    scroll-margin-block: 7px;
+  }
+
+  .host-shell :is(.lobby-heading, .voting, .podium-scene) h1 {
+    margin: 5px 0 6px;
+    font-size: clamp(1.85rem, 8vh, 3.7rem);
+  }
+
+  .host-shell :is(.lobby-heading > p, .voting > p, .podium-scene > p) {
+    font-size: clamp(0.8rem, 2.8vh, 1rem);
+  }
+
+  .host-shell .lobby-layout {
+    grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.1fr);
+    gap: 13px;
+    margin-top: clamp(8px, 2.3vh, 17px);
+  }
+
+  .host-shell :is(.invite-panel, .roster-panel) {
+    min-height: 0;
+    padding: clamp(9px, 2.7vh, 19px);
+  }
+
+  .host-shell .invite-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(7px, 1.6vh, 13px);
+  }
+
+  .host-shell .qr {
+    width: clamp(76px, min(20vh, 12vw), 144px);
+  }
+
+  .host-shell .invite-code {
+    margin: clamp(7px, 1.65vh, 12px) 0;
+  }
+
+  .host-shell .invite-code span {
+    width: clamp(24px, min(8.1vh, 5.3vw), 55px);
+    font-size: clamp(1.1rem, 6.5vh, 2.8rem);
+  }
+
+  .host-shell .roster-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    margin-top: 6px;
+  }
+
+  .host-shell .roster-avatar .player-badge {
+    min-height: 0;
+  }
+
+  .host-shell .roster-avatar .jelly {
+    width: clamp(23px, 7vh, 54px);
+    height: auto;
+  }
+
+  .host-shell .roster-avatar strong {
+    font-size: 0.77rem;
+  }
+  .host-shell .roster-avatar small {
+    font-size: 0.63rem;
+  }
+  .host-shell .roster-empty {
+    margin-top: 4px;
+  }
+  .host-shell .roster-empty .jelly {
+    width: clamp(42px, 13vh, 72px);
+    height: auto;
+  }
+
+  .host-shell .lobby-actions {
+    align-items: flex-start;
+    margin-top: clamp(9px, 2.4vh, 18px);
+  }
+
+  .host-shell .lobby-actions > div {
+    gap: 4px;
+  }
+  .host-shell .lobby-actions select {
+    min-height: 33px;
+    padding-block: 5px;
+  }
+
+  .host-shell .vote-layout {
+    grid-template-columns: minmax(0, 1fr) clamp(145px, 22vw, 300px);
+    gap: clamp(9px, 1.5vw, 18px);
+  }
+
+  .host-shell .voting h1 {
+    font-size: clamp(1.55rem, 6.6vh, 3rem);
+  }
+
+  .host-shell .vote-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(5px, 1.4vh, 10px);
+    margin-top: clamp(6px, 1.8vh, 14px);
+  }
+
+  .host-shell .vote-grid .game-card {
+    min-height: clamp(50px, 12.8vh, 100px);
+    display: grid;
+    grid-template-columns: clamp(20px, 5vh, 37px) minmax(0, 1fr);
+    align-items: center;
+    align-content: start;
+    gap: 4px 6px;
+    padding: clamp(5px, 1.5vh, 11px);
+  }
+
+  .host-shell .vote-grid .game-card::before {
+    opacity: 0.27;
+  }
+
+  .host-shell .vote-grid .game-card-icon {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .host-shell .vote-grid .game-card-icon svg {
+    width: 74%;
+    height: 74%;
+  }
+
+  .host-shell .vote-grid .game-card-copy {
+    position: relative;
+    line-height: 1;
+  }
+
+  .host-shell .vote-grid .game-card-copy h3 {
+    margin: 2px 0 0;
+    font-size: clamp(0.73rem, min(1.75vw, 3.5vh), 1.25rem);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  .host-shell .vote-grid .game-card-copy span {
+    font-size: clamp(0.4rem, 1.3vh, 0.59rem);
+    line-height: 1.1;
+  }
+
+  .host-shell .vote-grid .game-card-copy p {
+    display: none;
+  }
+
+  .host-shell .voter-badges {
+    grid-column: 1 / -1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .host-shell .voter-badges .vote-avatar {
+    margin: 0;
+  }
+  .host-shell .voter-badges svg {
+    width: min(100%, 4vh);
+    height: auto;
+  }
+  .host-shell .vote-footer {
+    margin-top: 4px;
+  }
+  .host-shell .leaderboard {
+    padding: 9px;
+  }
+  .host-shell .leaderboard h2 {
+    margin-top: 8px;
+    font-size: clamp(1.1rem, 3.8vh, 1.8rem);
+  }
+  .host-shell .leaderboard-list {
+    grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+    gap: 3px;
+    margin: 7px 0;
+  }
+  .host-shell .leaderboard-row {
+    gap: 3px;
+    padding: 2px 3px;
+  }
+  .host-shell .leaderboard-row strong {
+    font-size: 0.69rem;
+  }
+  .host-shell .leaderboard-row .jelly {
+    width: clamp(15px, 3.7vh, 28px);
+    height: auto;
+  }
+  .host-shell .leaderboard-row b {
+    font-size: 0.76rem;
+  }
+
+  .host-shell .active-game-title {
+    gap: 9px;
+    margin-bottom: clamp(6px, 1.8vh, 13px);
+  }
+
+  .host-shell .active-game-title h1 {
+    font-size: clamp(1.4rem, 6vh, 3rem);
+  }
+
+  .host-shell .active-game-title .game-card-icon {
+    width: clamp(29px, 8vh, 51px);
+    height: clamp(29px, 8vh, 51px);
+  }
+
+  .host-shell .game-columns {
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) clamp(145px, 24vw, 300px);
+  }
+
+  .host-shell .game-sidebar {
+    padding: 9px;
+    gap: 3px;
+  }
+  .host-shell .game-sidebar .jelly {
+    width: clamp(22px, 5vh, 42px);
+    height: auto;
+  }
+  .host-shell .board {
+    width: min(100%, calc(100dvh - clamp(175px, 35.5vh, 255px)));
+  }
+  .host-shell .board-middle {
+    gap: 3px;
+  }
+  .host-shell .board-middle h2 {
+    font-size: clamp(1rem, 4.4vh, 2rem);
+  }
+  .host-shell .board-tile svg {
+    width: 45%;
+    height: 45%;
+  }
+  .host-shell .board-token .jelly {
+    width: clamp(19px, 5vh, 43px);
+    height: auto;
+  }
+  .host-shell .canvas-wrap {
+    width: min(100%, calc(100dvh - 145px));
+    margin-inline: auto;
+  }
+  .host-shell .uno-stage {
+    min-height: 0;
+  }
+  .host-shell .uno-stage .uno-card {
+    max-height: 31vh;
+    width: auto;
+    aspect-ratio: 2 / 3;
+  }
+  .host-shell :is(.sketch-stage, .playing-stage, .uno-stage, .auction-stage) {
+    gap: clamp(6px, 1.7vh, 12px);
+    padding: clamp(8px, 1.9vh, 14px);
+  }
+  .host-shell .podium-scene {
+    padding-top: 6px;
+  }
+  .host-shell .podium-place svg.jelly {
+    width: min(100%, 25vh);
+  }
+  .host-shell .podium-place[data-place="1"] svg.jelly {
+    width: min(100%, 32vh);
+  }
+  .host-shell .pedestal {
+    height: min(13vh, 110px);
+  }
+  .host-shell .podium-place[data-place="1"] .pedestal {
+    height: min(18vh, 145px);
+  }
+  .host-shell .podium-place[data-place="3"] .pedestal {
+    height: min(10vh, 80px);
+  }
+}
+
+@media (orientation: landscape) and (min-width: 600px) and (max-height: 780px) and (max-width: 1024px) {
+  .host-shell .host-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .host-shell .signature {
+    font-size: 0.5rem;
+    padding: 2px 5px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 600px) and (max-height: 780px) and (max-width: 760px) {
+  .host-shell .topbar .room-status {
+    display: none;
+  }
+  .host-shell .header-room b {
+    display: none;
+  }
+  .host-shell .end-night span {
+    display: none;
+  }
+}
