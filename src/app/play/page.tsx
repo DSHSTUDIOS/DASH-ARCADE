@@ -13,10 +13,15 @@ import {
 import { useEffect, useRef, useState } from "react";
 import BootSplash from "@/components/BootSplash";
 import InstallPromptModal from "@/components/InstallPromptModal";
+import TeamDraftBanner from "@/components/TeamDraftBanner";
 import AvatarStudio from "@/components/AvatarStudio";
 import JellyAvatar from "@/components/JellyAvatar";
 import JamInviteForm from "@/components/JamInviteForm";
-import { spotifyInvite, spotifyTop100, spotifyGlobal50 } from "@/lib/spotifyJam";
+import {
+  spotifyInvite,
+  spotifyTop100,
+  spotifyGlobal50,
+} from "@/lib/spotifyJam";
 import {
   Brand,
   ModuleLabel,
@@ -240,7 +245,9 @@ function Controller({
   const [room, setRoom] = useState<HubView>();
   const [inviteSent, setInviteSent] = useState(false);
   const [musicSetup] = useState(
-    () => typeof location !== "undefined" && new URLSearchParams(location.search).get("music") === "spotify",
+    () =>
+      typeof location !== "undefined" &&
+      new URLSearchParams(location.search).get("music") === "spotify",
   );
   const [hostOffset, setHostOffset] = useState(0);
   const [ink, setInk] = useState<{ key: string; strokes: Stroke[] }>();
@@ -283,35 +290,58 @@ function Controller({
   };
   const game = room?.game && registry[room.game.id];
   const jamUrl = spotifyInvite(room?.spotifyJam);
-  const jamPanel = room && hostOnline &&
+  const jamPanel =
+    room &&
+    hostOnline &&
     (status === "local" || status === "live") &&
     (active || musicSetup) &&
     room.players.some((member) => member.id === player.id) ? (
-    <section className="panel phone-jam">
-      {jamUrl && (
-        <a className="primary" href={jamUrl} target="_blank" rel="noreferrer">
-          Join Spotify Jam · Add songs
-        </a>
-      )}
-      <details open={musicSetup || undefined}>
-        <summary>{jamUrl ? "Spotify playlists" : "Spotify Jam"}</summary>
-        <div className="actions">
-          <a className="secondary" href={spotifyTop100} target="_blank" rel="noreferrer">Top 100 all-time</a>
-          <a className="subtle" href={spotifyGlobal50} target="_blank" rel="noreferrer">Today’s Global Top 50</a>
-        </div>
-        {!jamUrl && (
-          <JamInviteForm
-            submitLabel="Send invite to the TV"
-            onInvite={(url) => {
-              sendAction(room.epoch, { type: "spotify-jam-invite", value: url });
-              setInviteSent(true);
-            }}
-          />
+      <section className="panel phone-jam">
+        {jamUrl && (
+          <a className="primary" href={jamUrl} target="_blank" rel="noreferrer">
+            Join Spotify Jam · Add songs
+          </a>
         )}
-        {inviteSent && !jamUrl && <small role="status">The host can approve the invite from Party music.</small>}
-      </details>
-    </section>
-  ) : null;
+        <details open={musicSetup || undefined}>
+          <summary>{jamUrl ? "Spotify playlists" : "Spotify Jam"}</summary>
+          <div className="actions">
+            <a
+              className="secondary"
+              href={spotifyTop100}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Top 100 all-time
+            </a>
+            <a
+              className="subtle"
+              href={spotifyGlobal50}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Today’s Global Top 50
+            </a>
+          </div>
+          {!jamUrl && (
+            <JamInviteForm
+              submitLabel="Send invite to the TV"
+              onInvite={(url) => {
+                sendAction(room.epoch, {
+                  type: "spotify-jam-invite",
+                  value: url,
+                });
+                setInviteSent(true);
+              }}
+            />
+          )}
+          {inviteSent && !jamUrl && (
+            <small role="status">
+              The host can approve the invite from Party music.
+            </small>
+          )}
+        </details>
+      </section>
+    ) : null;
   return (
     <>
       <div className="phone-meta">
@@ -389,9 +419,18 @@ function Controller({
               </div>
             </section>
           )}
+          {room.phase === "TEAM_SPLIT" && (
+            <TeamDraftBanner
+              room={room}
+              now={now || Date.now()}
+              me={player.id}
+              onPick={(team) => send("team-pick", team)}
+            />
+          )}
           {room.phase === "GAME" && (
             <section
               className="panel phone-panel phone-game"
+              data-team-game={game?.team || undefined}
               style={game ? gameColor(game.accent) : undefined}
             >
               {game && room.game ? (

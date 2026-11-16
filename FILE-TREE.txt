@@ -67,6 +67,7 @@ DASH-ARCADE/
 │   │   ├── party-stage.css
 │   │   ├── showtime.css
 │   │   ├── sketchbook.css
+│   │   ├── team-games.css
 │   │   └── tv-fit.css
 │   ├── components/
 │   │   ├── ArcadeIcons.tsx
@@ -82,6 +83,7 @@ DASH-ARCADE/
 │   │   ├── JellyAvatar.tsx
 │   │   ├── PwaRegistration.tsx
 │   │   ├── RoomStatus.tsx
+│   │   ├── TeamDraftBanner.tsx
 │   │   ├── TouchCanvas.tsx
 │   │   └── TVBallot.tsx
 │   ├── engines/
@@ -100,6 +102,15 @@ DASH-ARCADE/
 │   │   ├── prompts.ts
 │   │   ├── registry.ts
 │   │   ├── tee-ko.ts
+│   │   ├── team/
+│   │   │   ├── brainwaves.tsx
+│   │   │   ├── cipher-grid.tsx
+│   │   │   ├── defuse-panic.tsx
+│   │   │   ├── icons.tsx
+│   │   │   ├── shared.tsx
+│   │   │   ├── signal-jam.tsx
+│   │   │   ├── spectrums.ts
+│   │   │   └── word-bank.ts
 │   │   └── types.ts
 │   ├── hooks/
 │   │   └── useTVRemote.ts

@@ -14,7 +14,7 @@ Dash Arcade uses one **host** screen at `/host` and a **controller** at `/play` 
 From a computer with Node.js 22 or later:
 
 ```sh
-git clone https://github.com/TwinSailsStudios/DASH-ARCADE.git
+git clone https://github.com/DSHSTUDIOS/DASH-ARCADE.git
 cd DASH-ARCADE
 npm ci
 npm run dev
@@ -100,7 +100,7 @@ Alternatively, transfer the APK to the phone, open it in the system file manager
 
 ### Install on Google TV or Android TV
 
-**Get the APK onto your computer first.** [Download the v2 APK from Releases](https://github.com/TwinSailsStudios/DASH-ARCADE/releases), [extract it from source](#extract-the-apk-from-source), or [build it for your own deployment](#build). The commands below use the locally built APK's path. For a release or extracted APK, substitute the path to the file on your computer.
+**Get the APK onto your computer first.** [Download the v2 APK from Releases](https://github.com/DSHSTUDIOS/DASH-ARCADE/releases), [extract it from source](#extract-the-apk-from-source), or [build it for your own deployment](#build). The commands below use the locally built APK's path. For a release or extracted APK, substitute the path to the file on your computer.
 
 #### Wi-Fi sideload with ADB
 

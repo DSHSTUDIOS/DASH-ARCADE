@@ -1,10 +1,24 @@
 import type { ComponentType, CSSProperties } from "react";
-import type { Action, Effect, GameId, HubView, Stroke } from "@/lib/types";
+import type {
+  Action,
+  Effect,
+  GameId,
+  HubView,
+  Stroke,
+  TeamId,
+  TeamRosters,
+} from "@/lib/types";
 
-export type GameContext = { now: number; online: string[]; ids: string[] };
+export type GameContext = {
+  now: number;
+  online: string[];
+  ids: string[];
+  teams?: TeamRosters;
+};
 export type GameResult<S> = {
   data: S;
   rankings?: string[];
+  teamWinner?: TeamId | "draw";
   effect?: Effect;
   stroke?: Stroke[] | "clear";
 };
@@ -19,6 +33,7 @@ export type ScreenProps<S> = {
 export type PartyGamePlugin<S = unknown, V = S> = {
   id: GameId;
   title: string;
+  team?: true;
   category: string;
   description: string;
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;

@@ -50,6 +50,17 @@ const effects: Record<Effect, { wave: OscillatorType; notes: Note[] }> = {
       [330, 0.045],
     ],
   },
+  shutter: {
+    wave: "triangle",
+    notes: [
+      [180, 0.05, 0, 70],
+      [220, 0.055, 0.09, 85],
+      [340, 0.06, 0.18, 110],
+      [523, 0.16, 0.28],
+      [659, 0.18, 0.38],
+      [1047, 0.35, 0.49],
+    ],
+  },
   victory: {
     wave: "triangle",
     notes: [

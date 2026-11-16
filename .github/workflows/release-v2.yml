@@ -1,4 +1,4 @@
-name: Publish Dash Arcade v2.2.0
+name: Publish Dash Arcade v2.3.0
 
 on:
   push:
@@ -12,25 +12,25 @@ permissions:
 
 jobs:
   publish:
-    if: github.repository == 'TwinSailsStudios/DASH-ARCADE' && github.ref == 'refs/heads/main'
+    if: github.repository == 'DSHSTUDIOS/DASH-ARCADE' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Assemble the signed APK and verify its checksum
         run: |
           node scripts/extract-preview-apk.mjs
-          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.2.0.apk
+          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.3.0.apk
       - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           ARCADE_RELEASE_COMMIT: ${{ github.sha }}
         run: |
-          if gh release view v2.2.0 > /dev/null 2>&1; then
-            gh release download v2.2.0 --pattern Dash-Arcade-v2.2.0.apk --output existing.apk
-            cmp existing.apk Dash-Arcade-v2.2.0.apk
+          if gh release view v2.3.0 > /dev/null 2>&1; then
+            gh release download v2.3.0 --pattern Dash-Arcade-v2.3.0.apk --output existing.apk
+            cmp existing.apk Dash-Arcade-v2.3.0.apk
             exit
           fi
-          gh release create v2.2.0 Dash-Arcade-v2.2.0.apk \
+          gh release create v2.3.0 Dash-Arcade-v2.3.0.apk \
             --target "$ARCADE_RELEASE_COMMIT" \
-            --title "Dash Arcade v2.2.0" \
-            --notes "Dash Arcade v2.2.0 rebuilds the TV presentation around larger type, QR codes, vote cards, and a full-screen paper transition. Long Spotify titles scroll in the TV header. See the setup guide for TV installation."
+            --title "Dash Arcade v2.3.0" \
+            --notes "The Team-Play Expansion adds Brainwaves, Cipher Grid, Signal Jam, and Defuse & Panic. Draft Signal and Cobalt on your phones with four or more players. Team results count toward the same nightly leaderboard."

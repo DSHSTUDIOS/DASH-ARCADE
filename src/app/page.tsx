@@ -37,7 +37,7 @@ export default function Home() {
             </h1>
             <p>
               Turn your TV into a party arcade. Grab your phone, rally your
-              friends, and play eleven games in one room.
+              friends, and play fifteen games in one room.
             </p>
             <div className="actions hero-actions">
               <Link href="/host" className="primary">
@@ -95,7 +95,7 @@ export default function Home() {
             <Users size={17} /> 2–12 players
           </span>
           <span>
-            <Gamepad2 size={17} /> 11 party games
+            <Gamepad2 size={17} /> {games.length} party games
           </span>
         </div>
         <section className="library" id="games">

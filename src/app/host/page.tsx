@@ -29,6 +29,7 @@ import BootSplash from "@/components/BootSplash";
 import Credits from "@/components/Credits";
 import { useTVRemote } from "@/hooks/useTVRemote";
 import HostAudio from "@/components/HostAudio";
+import TeamDraftBanner from "@/components/TeamDraftBanner";
 import TVBallot from "@/components/TVBallot";
 import { spotifyInvite } from "@/lib/spotifyJam";
 import JellyAvatar from "@/components/JellyAvatar";
@@ -36,6 +37,9 @@ import { registry } from "@/games/registry";
 import { gameColor, secondsLeft } from "@/games/types";
 import {
   choices,
+  chooseTeam,
+  finishTeamDraft,
+  onTeamGameComplete,
   closeCredits,
   launch,
   lockVote,
@@ -105,7 +109,10 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
   const [saveProblem, setSaveProblem] = useState(false);
   const [endConfirm, setEndConfirm] = useState(false);
   const [jamOpen, setJamOpen] = useState(false);
-  const [jamProposal, setJamProposal] = useState<{ player: string; url: string }>();
+  const [jamProposal, setJamProposal] = useState<{
+    player: string;
+    url: string;
+  }>();
   const jamUrl = spotifyInvite(state.spotifyJam);
   const jamQrTarget = jamUrl || (joinUrl && `${joinUrl}&music=spotify`);
   const [jamQr, setJamQr] = useState<{ url: string; image: string }>();
@@ -138,6 +145,7 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     state.phase === "ROULETTE" ||
       state.phase === "VOTING" ||
       state.phase === "GAME" ||
+      state.phase === "TEAM_SPLIT" ||
       autoStartAt > 0,
   );
   const readyRoster = online.join(",");
@@ -171,27 +179,30 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
     setState(next);
   }
 
-  useTVRemote(jamOpen ? `SPOTIFY-${Boolean(jamUrl)}` : state.phase + endConfirm, () => {
-    if (jamOpen) {
-      setJamOpen(false);
-      return true;
-    }
-    if (endConfirm) {
-      setEndConfirm(false);
-      return true;
-    }
-    if (latest.current.phase === "CREDITS") {
-      commit(closeCredits(latest.current, Date.now()));
-      return true;
-    }
-    const music =
-      document.querySelector<HTMLDetailsElement>(".music-menu[open]");
-    if (music) {
-      music.open = false;
-      return true;
-    }
-    return false;
-  });
+  useTVRemote(
+    jamOpen ? `SPOTIFY-${Boolean(jamUrl)}` : state.phase + endConfirm,
+    () => {
+      if (jamOpen) {
+        setJamOpen(false);
+        return true;
+      }
+      if (endConfirm) {
+        setEndConfirm(false);
+        return true;
+      }
+      if (latest.current.phase === "CREDITS") {
+        commit(closeCredits(latest.current, Date.now()));
+        return true;
+      }
+      const music =
+        document.querySelector<HTMLDetailsElement>(".music-menu[open]");
+      if (music) {
+        music.open = false;
+        return true;
+      }
+      return false;
+    },
+  );
 
   function updateGame(
     current: HubState,
@@ -209,6 +220,10 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
       { now: time, ids: current.participants, online: connected.current },
       action,
     );
+    if (outcome.teamWinner) {
+      commit(onTeamGameComplete(current, outcome.teamWinner, time));
+      return;
+    }
     if (outcome.rankings) {
       commit(onGameComplete(current, outcome.rankings, time));
       return;
@@ -262,7 +277,8 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           }
           return;
         }
-        if (current.epoch !== epoch || !connected.current.includes(player)) return;
+        if (current.epoch !== epoch || !connected.current.includes(player))
+          return;
         if (
           current.phase === "VOTING" &&
           Date.now() < current.deadline &&
@@ -274,6 +290,12 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
             votes: { ...current.votes, [player]: action.value as GameChoice },
           });
         }
+        if (
+          current.phase === "TEAM_SPLIT" &&
+          action.type === "team-pick" &&
+          (action.value === "signal" || action.value === "cobalt")
+        )
+          commit(chooseTeam(current, player, action.value, Date.now()));
         if (current.phase === "GAME" && current.participants.includes(player))
           updateGame(current, Date.now(), { ...action, player });
       },
@@ -349,6 +371,8 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
         current.selected
       )
         commit(launch(current, current.selected, ids, time));
+      if (current.phase === "TEAM_SPLIT" && time >= current.deadline)
+        commit(finishTeamDraft(current, ids, time));
       if (current.phase === "GAME") updateGame(current, time);
     }, 120);
     return () => clearInterval(timer);
@@ -507,7 +531,9 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
               <ModuleLabel icon={<Gamepad2 size={15} />}>
                 HOST LOBBY
               </ModuleLabel>
-              <h1>Game night<span>.</span></h1>
+              <h1>
+                Game night<span>.</span>
+              </h1>
               <p>Join from your phone, pick a Jelly, and ready up.</p>
             </div>
             <div className="lobby-layout">
@@ -628,9 +654,19 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
             <section className="voting">
               <div className="voting-top">
                 <div className="voting-heading">
-                  <ModuleLabel icon={<Vote size={16} />}>VOTING HUB</ModuleLabel>
-                  <h1>{state.phase === "ROULETTE" ? "Tie-breaker!" : "Pick a game."}</h1>
-                  <p>{state.phase === "ROULETTE" ? "Picking from the tied games…" : "Vote on your phone."}</p>
+                  <ModuleLabel icon={<Vote size={16} />}>
+                    VOTING HUB
+                  </ModuleLabel>
+                  <h1>
+                    {state.phase === "ROULETTE"
+                      ? "Tie-breaker!"
+                      : "Pick a game."}
+                  </h1>
+                  <p>
+                    {state.phase === "ROULETTE"
+                      ? "Picking from the tied games…"
+                      : "Vote on your phone."}
+                  </p>
                 </div>
                 <Timer
                   deadline={state.deadline}
@@ -641,9 +677,15 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
               <TVBallot key={state.epoch} room={room} contender={choice} />
               <footer className="split vote-footer">
                 <span className="vote-completion">
-                  <span>{voters} / {online.length} votes in</span>
+                  <span>
+                    {voters} / {online.length} votes in
+                  </span>
                   <span className="vote-completion-track" aria-hidden="true">
-                    <i style={{ transform: `scaleX(${online.length ? voters / online.length : 0})` }} />
+                    <i
+                      style={{
+                        transform: `scaleX(${online.length ? voters / online.length : 0})`,
+                      }}
+                    />
                   </span>
                 </span>
                 {state.phase === "VOTING" && (
@@ -665,9 +707,26 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
             <Leaderboard room={room} />
           </div>
         )}
+        {state.phase === "TEAM_SPLIT" && (
+          <TeamDraftBanner
+            room={room}
+            now={now || Date.now()}
+            onBalance={() =>
+              commit(
+                finishTeamDraft(
+                  latest.current,
+                  connected.current,
+                  Date.now(),
+                  true,
+                ),
+              )
+            }
+          />
+        )}
         {state.phase === "GAME" && currentGame && room.game && (
           <section
             className="active-game"
+            data-team-game={currentGame.team || undefined}
             style={gameColor(currentGame.accent)}
           >
             <div key={state.epoch} className="active-game-title">
@@ -704,11 +763,14 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           />
         )}
       </main>
-      {state.epoch > 0 && ["VOTING", "GAME", "PODIUM"].includes(state.phase) && (
-        <div key={state.epoch} className="phase-wipe" aria-hidden="true">
-          <i /><i /><i />
-        </div>
-      )}
+      {state.epoch > 0 &&
+        ["VOTING", "GAME", "PODIUM"].includes(state.phase) && (
+          <div key={state.epoch} className="phase-wipe" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
       {jamOpen && (
         <div className="dialog-backdrop" onClick={() => setJamOpen(false)}>
           <section
@@ -734,7 +796,11 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 {jamQrTarget && jamQr?.url === jamQrTarget && (
                   <img
                     src={jamQr.image}
-                    alt={jamUrl ? "QR code to join Spotify Jam" : "QR code to set up Spotify Jam on your phone"}
+                    alt={
+                      jamUrl
+                        ? "QR code to join Spotify Jam"
+                        : "QR code to set up Spotify Jam on your phone"
+                    }
                     width={360}
                     height={360}
                   />
@@ -744,7 +810,10 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 {jamUrl ? (
                   <>
                     <h3>Scan to join the queue</h3>
-                    <p>Open the QR code with your phone camera, then add songs in Spotify.</p>
+                    <p>
+                      Open the QR code with your phone camera, then add songs in
+                      Spotify.
+                    </p>
                     <button className="secondary" onClick={() => shareJam()}>
                       Remove invite and resume arcade music
                     </button>
@@ -752,17 +821,31 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
                 ) : (
                   <>
                     <h3>Send an invite from your phone</h3>
-                    <p>Start a Jam in Spotify Premium and copy its share link. Scan this code and paste the link on your phone.</p>
+                    <p>
+                      Start a Jam in Spotify Premium and copy its share link.
+                      Scan this code and paste the link on your phone.
+                    </p>
                   </>
                 )}
                 {jamProposal && (
                   <>
-                    <p>{state.players.find((player) => player.id === jamProposal.player)?.name ?? "A player"} sent a Jam invite.</p>
+                    <p>
+                      {state.players.find(
+                        (player) => player.id === jamProposal.player,
+                      )?.name ?? "A player"}{" "}
+                      sent a Jam invite.
+                    </p>
                     <div className="actions">
-                      <button className="primary" onClick={() => shareJam(jamProposal.url)}>
+                      <button
+                        className="primary"
+                        onClick={() => shareJam(jamProposal.url)}
+                      >
                         Share invite with this room
                       </button>
-                      <button className="subtle" onClick={() => setJamProposal(undefined)}>
+                      <button
+                        className="subtle"
+                        onClick={() => setJamProposal(undefined)}
+                      >
                         Dismiss
                       </button>
                     </div>

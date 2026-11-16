@@ -68,11 +68,13 @@ export function GameCard({
   selected,
   onVote,
   highlighted,
+  disabled,
 }: {
   choice: GameChoice;
   room?: HubView;
   selected?: boolean;
   highlighted?: boolean;
+  disabled?: boolean;
   onVote?: () => void;
 }) {
   const { title, category, description, icon: Icon, accent } = gameInfo(choice);
@@ -85,7 +87,7 @@ export function GameCard({
       <div className="game-card-copy">
         <span>{category}</span>
         <h3>{title}</h3>
-        <p>{description}</p>
+        <p>{disabled ? "Needs four ready players" : description}</p>
       </div>
       {room && (
         <div className="voter-badges">
@@ -111,6 +113,7 @@ export function GameCard({
       className="game-card vote-choice"
       style={style}
       aria-pressed={selected}
+      disabled={disabled}
       onClick={onVote}
     >
       {content}
@@ -198,7 +201,7 @@ export function Leaderboard({ room }: { room: HubView }) {
         ))}
       </div>
       <div className="leaderboard-footer">
-        <Sparkles size={15} /> 1st +5 · 2nd +3 · 3rd +2 · Play +1
+        <Sparkles size={15} /> Solo +5 / +3 / +2 / +1 · Teams +5 / +2
       </div>
     </aside>
   );

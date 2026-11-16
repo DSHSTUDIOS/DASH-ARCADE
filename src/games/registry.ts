@@ -8,6 +8,10 @@ import bidBrush from "./bid-brush";
 import { fakinIt, triviaDungeon } from "./deduction-games";
 import { fibbageLies, quiplashClash, splitTheRoom } from "./prompt-games";
 import teeKo from "./tee-ko";
+import brainwaves from "./team/brainwaves";
+import cipherGrid from "./team/cipher-grid";
+import signalJam from "./team/signal-jam";
+import defusePanic from "./team/defuse-panic";
 
 export const games = [
   boardBlitz,
@@ -21,6 +25,10 @@ export const games = [
   teeKo,
   fakinIt,
   triviaDungeon,
+  brainwaves,
+  cipherGrid,
+  signalJam,
+  defusePanic,
 ];
 export const registry = Object.fromEntries(
   games.map((game) => [game.id, game]),

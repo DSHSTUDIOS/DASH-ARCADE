@@ -35,10 +35,27 @@ export type GameId =
   | "split-the-room"
   | "tee-ko"
   | "fakin-it"
-  | "trivia-dungeon";
+  | "trivia-dungeon"
+  | "brainwaves"
+  | "cipher-grid"
+  | "signal-jam"
+  | "defuse-panic";
 export type GameChoice = GameId | "end";
 export type Phase =
-  "LOBBY" | "VOTING" | "ROULETTE" | "GAME" | "PODIUM" | "CREDITS";
+  | "LOBBY"
+  | "VOTING"
+  | "ROULETTE"
+  | "TEAM_SPLIT"
+  | "GAME"
+  | "PODIUM"
+  | "CREDITS";
+export type TeamId = "signal" | "cobalt";
+export type TeamRosters = Record<TeamId, string[]>;
+export type TeamDraft = {
+  game: GameId;
+  eligible: string[];
+  picks: Partial<Record<string, TeamId>>;
+};
 export type Session = { id: GameId; data: unknown };
 export type HubView = {
   code: string;
@@ -56,16 +73,26 @@ export type HubView = {
   gamesPlayed: number;
   wins: Record<string, number>;
   game?: Session;
+  teamDraft?: TeamDraft;
 };
 export type HubState = Omit<HubView, "online"> & {
   spicy: boolean;
+  teams?: TeamRosters;
   participants: string[];
   creditsFrom?: "LOBBY" | "VOTING" | "PODIUM";
   creditsRemaining?: number;
   sound?: { id: number; effect: Effect };
 };
 export type Effect =
-  "join" | "tick" | "dice" | "coin" | "card" | "gavel" | "victory" | "boot";
+  | "join"
+  | "tick"
+  | "dice"
+  | "coin"
+  | "card"
+  | "gavel"
+  | "victory"
+  | "boot"
+  | "shutter";
 export type Action = { type: string; value?: unknown };
 export type Stroke = {
   x1: number;

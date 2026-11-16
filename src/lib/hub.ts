@@ -6,6 +6,8 @@ import {
   type GameChoice,
   type HubState,
   type HubView,
+  type TeamId,
+  type TeamRosters,
 } from "./types";
 
 export const ROOM_CAP = 12;
@@ -46,6 +48,8 @@ export function voting(state: HubState, now: number): HubState {
     selected: undefined,
     roulette: [],
     game: undefined,
+    teams: undefined,
+    teamDraft: undefined,
     participants: [],
   };
 }
@@ -57,6 +61,8 @@ export function podium(state: HubState): HubState {
     epoch: state.epoch + 1,
     deadline: 0,
     game: undefined,
+    teams: undefined,
+    teamDraft: undefined,
     participants: [],
     sound: { id: (state.sound?.id ?? 0) + 1, effect: "victory" },
   };
@@ -86,6 +92,54 @@ export function onGameComplete(
   };
 }
 
+export function onTeamGameComplete(
+  state: HubState,
+  winner: TeamId | "draw",
+  now: number,
+): HubState {
+  if (!state.teams) return voting(state, now);
+  const points = { ...state.points };
+  const wins = { ...state.wins };
+  for (const team of ["signal", "cobalt"] as const) {
+    for (const id of state.teams[team]) {
+      points[id] = (points[id] ?? 0) + (winner === team ? 5 : 2);
+      if (winner === team) wins[id] = (wins[id] ?? 0) + 1;
+    }
+  }
+  return {
+    ...voting(state, now),
+    points,
+    wins,
+    gamesPlayed: state.gamesPlayed + 1,
+    sound: { id: (state.sound?.id ?? 0) + 1, effect: "victory" },
+  };
+}
+
+function startGame(
+  state: HubState,
+  choice: Exclude<GameChoice, "end">,
+  ids: string[],
+  now: number,
+  teams?: TeamRosters,
+): HubState {
+  return {
+    ...state,
+    phase: "GAME",
+    participants: ids,
+    epoch: state.epoch + 1,
+    deadline: 0,
+    teamDraft: undefined,
+    teams,
+    game: {
+      id: choice,
+      data: registry[choice].create(
+        { now, ids, online: ids, teams },
+        state.spicy,
+      ),
+    },
+  };
+}
+
 export function launch(
   state: HubState,
   choice: GameChoice,
@@ -94,19 +148,63 @@ export function launch(
 ): HubState {
   if (choice === "end") return podium(state);
   if (eligible.length < 2) return voting(state, now);
-  const game = registry[choice];
-  const ids = shuffle(eligible);
+  if (!registry[choice].team)
+    return startGame(state, choice, shuffle(eligible), now);
+  if (eligible.length < 4) return voting(state, now);
   return {
     ...state,
-    phase: "GAME",
-    participants: ids,
+    phase: "TEAM_SPLIT",
     epoch: state.epoch + 1,
-    deadline: 0,
-    game: {
-      id: choice,
-      data: game.create({ now, ids, online: ids }, state.spicy),
-    },
+    deadline: now + 15000,
+    game: undefined,
+    teamDraft: { game: choice, eligible, picks: {} },
   };
+}
+
+export function chooseTeam(
+  state: HubState,
+  id: string,
+  team: TeamId,
+  now: number,
+): HubState {
+  const draft = state.teamDraft;
+  if (
+    state.phase !== "TEAM_SPLIT" ||
+    now >= state.deadline ||
+    !draft?.eligible.includes(id)
+  )
+    return state;
+  const picks = draft.picks;
+  const count = Object.values(picks).filter((pick) => pick === team).length;
+  if (picks[id] === team || count >= Math.ceil(draft.eligible.length / 2))
+    return state;
+  return { ...state, teamDraft: { ...draft, picks: { ...picks, [id]: team } } };
+}
+
+export function finishTeamDraft(
+  state: HubState,
+  online: string[],
+  now: number,
+  auto = false,
+): HubState {
+  if (state.phase !== "TEAM_SPLIT" || !state.teamDraft) return state;
+  const { eligible, picks, game } = state.teamDraft;
+  const ids = shuffle(eligible.filter((id) => online.includes(id)));
+  if (ids.length < 4) return voting(state, now);
+  const teams: TeamRosters = { signal: [], cobalt: [] };
+  const cap = Math.ceil(ids.length / 2);
+  const unassigned: string[] = [];
+  for (const id of ids) {
+    const picked = auto ? undefined : picks[id];
+    if (picked && teams[picked].length < cap) teams[picked].push(id);
+    else unassigned.push(id);
+  }
+  for (const id of unassigned) {
+    const team =
+      teams.signal.length <= teams.cobalt.length ? "signal" : "cobalt";
+    teams[team].push(id);
+  }
+  return startGame(state, game, ids, now, teams);
 }
 
 export function lockVote(
@@ -114,13 +212,16 @@ export function lockVote(
   ids: string[],
   now: number,
 ): HubState {
+  const available = choices.filter(
+    (id) => id === "end" || !registry[id].team || ids.length >= 4,
+  );
   const counts = keyed(
-    choices,
+    available,
     (choice) => ids.filter((id) => state.votes[id] === choice).length,
   );
   const top = Math.max(...Object.values(counts));
   if (!top && ids.length < 2) return voting(state, now);
-  const tied = choices.filter(
+  const tied = available.filter(
     (choice) => counts[choice] === top && (top || choice !== "end"),
   );
   const selected = tied[roll(tied.length)];
@@ -173,6 +274,7 @@ export function toView(
 ): HubView {
   const {
     participants,
+    teams,
     sound,
     spicy,
     game,
