@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GameCard } from "@/components/HubUI";
+import { GameCard, votingAvailability } from "@/components/HubUI";
 import { choices } from "@/lib/hub";
 import type { GameChoice, HubView } from "@/lib/types";
 
@@ -38,7 +38,12 @@ export default function TVBallot({
         {choices
           .slice(page * perPage, page * perPage + perPage)
           .map((choice) => (
-            <GameCard key={choice} choice={choice} room={room} />
+            <GameCard
+              key={choice}
+              choice={choice}
+              room={room}
+              unavailable={votingAvailability(choice, room.online.length)}
+            />
           ))}
       </div>
       {pageCount > 1 && (

@@ -13,7 +13,14 @@ import cipherGrid from "./team/cipher-grid";
 import signalJam from "./team/signal-jam";
 import defusePanic from "./team/defuse-panic";
 
-export const games = [
+import dropZone from "./classics/drop-zone";
+import fleetHunt from "./classics/fleet-hunt";
+import wordSync from "./classics/word-sync";
+import highStack from "./classics/high-stack";
+import colorEcho from "./classics/color-echo";
+import cueRush from "./classics/cue-rush";
+
+export const legacyGames = [
   boardBlitz,
   guessSketch,
   crazyCards,
@@ -30,6 +37,16 @@ export const games = [
   signalJam,
   defusePanic,
 ];
+export const classicGames = [
+  dropZone,
+  fleetHunt,
+  wordSync,
+  highStack,
+  colorEcho,
+  cueRush,
+];
+export const games = [...legacyGames, ...classicGames];
+
 export const registry = Object.fromEntries(
   games.map((game) => [game.id, game]),
 ) as Record<GameId, (typeof games)[number]>;

@@ -1,0 +1,293 @@
+.classic-surface {
+  display: grid;
+  gap: 10px;
+  padding: clamp(10px, 2.15vw, 22px);
+}
+.classic-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+}
+.classic-caption h2 {
+  font-size: clamp(1.35rem, 3vw, 2.4rem);
+  overflow-wrap: anywhere;
+}
+.classic-caption .timer {
+  font-variant-numeric: tabular-nums;
+}
+.classic-surface .timer {
+  background: #ffdd68;
+  border: 2px solid #111113;
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+.classic-center {
+  text-align: center;
+}
+.classic-prompt {
+  padding: 0.45em;
+  text-align: center;
+  background: #ffd95a;
+  border: 3px solid #111113;
+  border-radius: 6px;
+  font-size: clamp(1.5rem, 5vw, 3.7rem);
+}
+.classic-card {
+  padding: 5px 7px;
+  background: #fffbec;
+  border: 3px solid #111113;
+  border-radius: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.drop-board,
+.drop-controls {
+  width: min(100%, 560px);
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.drop-board {
+  padding: 5px;
+  background: #a9c6ff;
+  border: 3px solid #111113;
+  border-radius: 7px;
+  box-shadow: 4px 4px 0 #111113;
+}
+.drop-cell {
+  aspect-ratio: 1;
+  border: 2px solid #111113;
+  border-radius: 50%;
+  background: var(--squad-color, #f4f0ea);
+}
+.drop-controls button {
+  min-width: 0;
+  min-height: 43px;
+  padding: 2px;
+}
+.drop-cell[data-line="true"] {
+  outline: 3px solid #ffdb65;
+  outline-offset: -5px;
+}
+.drop-cell[data-last="true"],
+.fleet-cell[data-last="true"] {
+  animation: classic-land 250ms cubic-bezier(0.25, 0.75, 0.25, 1) both;
+}
+@keyframes classic-land {
+  from {
+    transform: translateY(-12%) scale(0.88);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.fleet-duel .team-box {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.fleet-chart {
+  width: min(100%, 520px);
+  margin-inline: auto;
+  padding: 5px;
+  gap: 3px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.fleet-cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 34px;
+  background: #c3e3f2;
+  color: #111113;
+  border: 2px solid #111113;
+  border-radius: 3px;
+  padding: 2px;
+  font: 700 0.78rem var(--mono);
+}
+button.fleet-cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.fleet-cell[data-mark="miss"] {
+  background: #e4e9ef;
+}
+.fleet-cell[data-mark="hit"] {
+  background: #ff8c74;
+}
+.fleet-cell[data-mark="ship"] {
+  background: #a7e1b1;
+  box-shadow: inset 0 0 0 2px #111113;
+}
+
+.word-matches,
+.stack-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 5px;
+}
+.word-matches article > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+}
+.word-matches article .player-badge {
+  min-height: 28px;
+}
+.word-matches article > strong {
+  display: block;
+  font-size: clamp(0.85rem, 2vw, 1.35rem);
+  line-height: 1.12;
+}
+.word-matches article > strong small {
+  font-size: 0.64rem;
+}
+
+.stack-table [data-stack-status="banked"] {
+  background: #cee8b6;
+}
+.stack-table [data-stack-status="bust"] {
+  background: #ffcece;
+}
+.stack-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 28px;
+}
+.stack-cards b {
+  display: grid;
+  place-items: center;
+  background: #fff7d8;
+  border: 2px solid #111113;
+  border-radius: 4px;
+  min-width: 23px;
+  min-height: 26px;
+  padding: 3px;
+  color: #111113;
+  font: 700 0.82rem var(--mono);
+}
+.stack-cards b[data-duplicate="true"] {
+  background: #ff876e;
+}
+.phone-game .stack-cards b {
+  aspect-ratio: 0.7;
+  min-width: clamp(28px, 10vw, 58px);
+  font-size: clamp(0.85rem, 4vw, 1.45rem);
+}
+
+.echo-palette {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 3px;
+}
+.echo-palette > * {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(26px, 6vw, 45px);
+  min-width: 0;
+  padding: 0;
+  border: 2px solid #111113;
+  border-radius: 3px;
+  font: 700 clamp(0.61rem, 2vw, 0.94rem) var(--mono);
+}
+.echo-palette [data-target="true"] {
+  outline: 3px dashed white;
+  outline-offset: -6px;
+}
+.echo-pins {
+  position: absolute;
+  inset: auto 0 -2px auto;
+  display: flex;
+  pointer-events: none;
+}
+.echo-pins strong {
+  background: #fff;
+  color: #111113;
+  border: 1px solid #111113;
+  border-radius: 0.25rem;
+}
+
+.cue-flash {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  min-height: clamp(130px, 35vh, 235px);
+  border: 3px solid #111113;
+  border-radius: 8px;
+  gap: 4px;
+  background: #eee1bf;
+  padding: 12px;
+}
+.cue-flash h2 {
+  font-size: clamp(2rem, 7vw, 5.4rem);
+}
+.cue-flash:not([data-cue="waiting"]) {
+  animation: classic-land 220ms ease-out both;
+}
+.cue-standings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 3px;
+}
+.cue-controls button {
+  min-height: 70px;
+  min-width: 0;
+}
+.vote-grid .game-card[data-unavailable="true"] {
+  opacity: 0.64;
+}
+.vote-filters {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.vote-filters button {
+  min-height: 36px;
+  padding: 4px 9px;
+  font-size: 0.78rem;
+}
+.vote-filters button[aria-pressed="true"] {
+  background: #ffdd68;
+}
+
+@media (orientation: landscape) and (max-height: 780px) {
+  .host-shell .classic-surface {
+    padding: 8px;
+    gap: 7px;
+  }
+  .host-shell .drop-board {
+    width: min(100%, 59vh);
+  }
+  .host-shell .fleet-cell {
+    min-height: clamp(23px, 6vh, 40px);
+  }
+  .host-shell .echo-palette > * {
+    min-height: clamp(25px, 6.6vh, 41px);
+  }
+  .host-shell .cue-flash {
+    min-height: clamp(110px, 31vh, 214px);
+  }
+}
+@media (max-width: 520px) {
+  .phone-game .fleet-cell {
+    min-height: 42px;
+  }
+  .phone-game .echo-palette > * {
+    min-height: 34px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drop-cell[data-last="true"],
+  .fleet-cell[data-last="true"],
+  .cue-flash:not([data-cue="waiting"]) {
+    animation: none;
+  }
+}

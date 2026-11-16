@@ -6,11 +6,12 @@ import "./tv-fit.css";
 import "./showtime.css";
 import "./party-stage.css";
 import "./team-games.css";
+import "./classic-games.css";
 
 export const metadata: Metadata = {
   title: "Dash Arcade | TV Party Hub",
   description:
-    "One TV, phones for controllers, and fifteen games for the whole room.",
+    "One TV, phones for controllers, and party games for the whole room.",
   applicationName: "Dash Arcade",
   appleWebApp: {
     capable: true,

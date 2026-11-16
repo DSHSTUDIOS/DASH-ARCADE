@@ -34,6 +34,7 @@ export type PartyGamePlugin<S = unknown, V = S> = {
   id: GameId;
   title: string;
   team?: true;
+  minPlayers?: 2 | 4;
   category: string;
   description: string;
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;

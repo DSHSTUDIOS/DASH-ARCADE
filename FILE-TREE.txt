@@ -60,6 +60,7 @@ DASH-ARCADE/
 │   │   │   └── page.tsx
 │   │   ├── play/
 │   │   │   └── page.tsx
+│   │   ├── classic-games.css
 │   │   ├── globals.css
 │   │   ├── layout.tsx
 │   │   ├── manifest.ts
@@ -95,6 +96,14 @@ DASH-ARCADE/
 │   │   ├── board-blitz.tsx
 │   │   ├── cards.ts
 │   │   ├── color-clash.tsx
+│   │   ├── classics/
+│   │   │   ├── color-echo.tsx
+│   │   │   ├── cue-rush.tsx
+│   │   │   ├── drop-zone.tsx
+│   │   │   ├── duel.ts
+│   │   │   ├── fleet-hunt.tsx
+│   │   │   ├── high-stack.tsx
+│   │   │   └── word-sync.tsx
 │   │   ├── crazy-cards.tsx
 │   │   ├── deduction-games.ts
 │   │   ├── guess-sketch.tsx

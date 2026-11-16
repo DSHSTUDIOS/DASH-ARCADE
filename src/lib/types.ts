@@ -39,7 +39,13 @@ export type GameId =
   | "brainwaves"
   | "cipher-grid"
   | "signal-jam"
-  | "defuse-panic";
+  | "defuse-panic"
+  | "drop-zone"
+  | "fleet-hunt"
+  | "word-sync"
+  | "high-stack"
+  | "color-echo"
+  | "cue-rush";
 export type GameChoice = GameId | "end";
 export type Phase =
   | "LOBBY"
@@ -74,6 +80,7 @@ export type HubView = {
   wins: Record<string, number>;
   game?: Session;
   teamDraft?: TeamDraft;
+  ballot?: GameChoice[];
 };
 export type HubState = Omit<HubView, "online"> & {
   spicy: boolean;

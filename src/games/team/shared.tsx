@@ -10,12 +10,12 @@ export const otherTeam = (team: TeamId): TeamId =>
 export const teamOf = (teams: TeamRosters, id: string) =>
   TEAM_IDS.find((team) => teams[team].includes(id));
 
-export function teamRosters(context: GameContext): TeamRosters {
+export function teamRosters(context: GameContext, perTeam = 2): TeamRosters {
   if (
     !context.teams ||
-    TEAM_IDS.some((team) => context.teams![team].length < 2)
+    TEAM_IDS.some((team) => context.teams![team].length < perTeam)
   )
-    throw new Error("Team games require at least two players on each team.");
+    throw new Error("The split did not assign enough players to each side.");
   return context.teams;
 }
 

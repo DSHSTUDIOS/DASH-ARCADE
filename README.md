@@ -1,6 +1,6 @@
 # Dash Arcade
 
-Fifteen multiplayer party games for one TV and 2–12 phone controllers, drawn in a crayon-and-pencil sketchbook style. Designed, engineered & built by Pratik Dash.
+Twenty-one multiplayer party games for one TV and 2–12 phone controllers, drawn in a crayon-and-pencil sketchbook style. Designed, engineered & built by Pratik Dash.
 
 [Install the APK on your TV](docs/SETUP.md#install-on-google-tv-or-android-tv) · [TV and phone setup guide](docs/SETUP.md) · [Play online](https://dash-arcade.thrivingnacre16.chatgpt.site/) · [Full source tree](FILE-TREE.txt)
 
@@ -38,8 +38,14 @@ Dash Arcade uses Next.js and Supabase Realtime Broadcast and Presence. The TV ho
 | Cipher Grid | Find your team’s agents before the rival team clears its grid or you hit the Blackout Trap |
 | Signal Jam | Eight alternating transmissions scored by decoding or intercepting the code |
 | Defuse & Panic | Four fictional console modules and a 90-second team race |
+| Drop Zone | Connect four discs on a seven-column board |
+| Fleet Hunt | Find the other side’s seven hidden ship squares |
+| Word Sync | Five rounds of finishing the same phrase as exactly one player |
+| High Stack | Bank number cards before drawing a repeat |
+| Color Echo | Match a hidden color with a short clue |
+| Cue Rush | Eight quick reflex cues with one attempt per player |
 
-Team games require four ready players. The 15-second Team Split lets players choose Signal or Cobalt on their phones. The TV host can auto-balance and start immediately. Every winner earns 5 hub points, and every runner-up earns 2. A draw awards both teams 2 each.
+Brainwaves, Cipher Grid, Signal Jam, and Defuse & Panic require four ready players. Drop Zone and Fleet Hunt start with two and rotate turns within each side in larger rooms. The 15-second Team Split lets players choose Signal or Cobalt on their phones. The TV host can auto-balance and start immediately. Every winner earns 5 hub points, and every runner-up earns 2. A draw awards both teams 2 each.
 
 In solo games, the first three finishers earn 5, 3, and 2 hub points. Everyone else who played gets 1. The host returns to the 60-second vote after each game. Select **End Game Night & Crown Winner** to reveal the podium. Credits are available from the lobby, voting screen, and podium. Opening Credits pauses the vote.
 

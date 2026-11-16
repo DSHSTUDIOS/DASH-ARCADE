@@ -37,7 +37,7 @@ export default function Home() {
             </h1>
             <p>
               Turn your TV into a party arcade. Grab your phone, rally your
-              friends, and play fifteen games in one room.
+              friends, and play {games.length} games in one room.
             </p>
             <div className="actions hero-actions">
               <Link href="/host" className="primary">

@@ -8,9 +8,10 @@ import {
   Trophy,
 } from "@/components/ArcadeIcons";
 import Link from "next/link";
+import { useState } from "react";
 import JellyAvatar from "./JellyAvatar";
 import { findPlayer, PlayerBadge } from "./GameUI";
-import { games, registry } from "@/games/registry";
+import { classicGames, legacyGames, registry } from "@/games/registry";
 import { gameColor } from "@/games/types";
 import { orderBy, type GameChoice, type HubView } from "@/lib/types";
 
@@ -68,13 +69,13 @@ export function GameCard({
   selected,
   onVote,
   highlighted,
-  disabled,
+  unavailable,
 }: {
   choice: GameChoice;
   room?: HubView;
   selected?: boolean;
   highlighted?: boolean;
-  disabled?: boolean;
+  unavailable?: string;
   onVote?: () => void;
 }) {
   const { title, category, description, icon: Icon, accent } = gameInfo(choice);
@@ -85,9 +86,9 @@ export function GameCard({
         <Icon size={25} strokeWidth={2} />
       </div>
       <div className="game-card-copy">
-        <span>{category}</span>
+        <span>{unavailable ?? category}</span>
         <h3>{title}</h3>
-        <p>{disabled ? "Needs four ready players" : description}</p>
+        <p>{description}</p>
       </div>
       {room && (
         <div className="voter-badges">
@@ -113,7 +114,7 @@ export function GameCard({
       className="game-card vote-choice"
       style={style}
       aria-pressed={selected}
-      disabled={disabled}
+      disabled={Boolean(unavailable)}
       onClick={onVote}
     >
       {content}
@@ -124,10 +125,18 @@ export function GameCard({
       style={style}
       data-highlighted={highlighted}
       data-voted={votes.length > 0 || undefined}
+      data-unavailable={Boolean(unavailable)}
     >
       {content}
     </article>
   );
+}
+
+export function votingAvailability(choice: GameChoice, count: number) {
+  if (choice === "end") return undefined;
+  const game = registry[choice];
+  const minimum = game.minPlayers ?? (game.team ? 4 : 2);
+  return count < minimum ? `Needs ${minimum} ready players` : undefined;
 }
 
 export function VotingCards({
@@ -141,19 +150,65 @@ export function VotingCards({
   me?: string;
   onVote?: (choice: GameChoice) => void;
 }) {
+  const [group, setGroup] = useState<"all" | "classics" | "teams">("all");
+  const catalog = room.ballot?.filter(
+    (id) => id === "end" || Object.hasOwn(registry, id),
+  ) ?? [...legacyGames.map((game) => game.id), "end" as const];
+  const isClassic = (id: GameChoice) =>
+    classicGames.some((game) => game.id === id);
+  const hasClassics = catalog.some(isClassic);
+  const visible = catalog.filter(
+    (choice) =>
+      group === "all" ||
+      (group === "classics" && isClassic(choice)) ||
+      (group === "teams" && choice !== "end" && registry[choice].team),
+  );
   return (
-    <div className="vote-grid">
-      {[...games.map((game) => game.id), "end" as const].map((choice) => (
-        <GameCard
-          key={choice}
-          choice={choice}
-          room={onVote ? undefined : room}
-          highlighted={active === choice}
-          selected={me ? room.votes[me] === choice : false}
-          onVote={onVote ? () => onVote(choice) : undefined}
-        />
-      ))}
-    </div>
+    <>
+      {onVote && (
+        <div className="vote-filters" aria-label="Filter games">
+          <button
+            className="secondary"
+            type="button"
+            aria-pressed={group === "all"}
+            onClick={() => setGroup("all")}
+          >
+            All games
+          </button>
+          {hasClassics && (
+            <button
+              className="secondary"
+              type="button"
+              aria-pressed={group === "classics"}
+              onClick={() => setGroup("classics")}
+            >
+              Classics
+            </button>
+          )}
+          <button
+            className="secondary"
+            type="button"
+            aria-pressed={group === "teams"}
+            onClick={() => setGroup("teams")}
+          >
+            Team play
+          </button>
+        </div>
+      )}
+      <div className="vote-grid">
+        {visible.map((choice) => (
+          <GameCard
+            key={choice}
+            choice={choice}
+            room={onVote ? undefined : room}
+            highlighted={active === choice}
+            selected={me ? room.votes[me] === choice : false}
+            onVote={onVote ? () => onVote(choice) : undefined}
+            unavailable={votingAvailability(choice, room.online.length)}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 

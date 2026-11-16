@@ -13,6 +13,12 @@ import {
 export const ROOM_CAP = 12;
 export const VOTE_TIME = 60000;
 export const choices: GameChoice[] = [...games.map((game) => game.id), "end"];
+export function requiredPlayers(id: GameChoice) {
+  if (id === "end") return 0;
+  const game = registry[id];
+  return game.minPlayers ?? (game.team ? 4 : 2);
+}
+
 export const roomKey = (code: string) => `party_hub_${code}`;
 
 export function emptyRoom(code: string): HubState {
@@ -150,7 +156,7 @@ export function launch(
   if (eligible.length < 2) return voting(state, now);
   if (!registry[choice].team)
     return startGame(state, choice, shuffle(eligible), now);
-  if (eligible.length < 4) return voting(state, now);
+  if (eligible.length < requiredPlayers(choice)) return voting(state, now);
   return {
     ...state,
     phase: "TEAM_SPLIT",
@@ -190,7 +196,7 @@ export function finishTeamDraft(
   if (state.phase !== "TEAM_SPLIT" || !state.teamDraft) return state;
   const { eligible, picks, game } = state.teamDraft;
   const ids = shuffle(eligible.filter((id) => online.includes(id)));
-  if (ids.length < 4) return voting(state, now);
+  if (ids.length < requiredPlayers(game)) return voting(state, now);
   const teams: TeamRosters = { signal: [], cobalt: [] };
   const cap = Math.ceil(ids.length / 2);
   const unassigned: string[] = [];
@@ -212,9 +218,7 @@ export function lockVote(
   ids: string[],
   now: number,
 ): HubState {
-  const available = choices.filter(
-    (id) => id === "end" || !registry[id].team || ids.length >= 4,
-  );
+  const available = choices.filter((id) => ids.length >= requiredPlayers(id));
   const counts = keyed(
     available,
     (choice) => ids.filter((id) => state.votes[id] === choice).length,
@@ -295,6 +299,7 @@ export function toView(
   return {
     ...view,
     online,
+    ballot: state.phase === "VOTING" ? choices : undefined,
     game: visibleGame,
     selected: state.phase === "ROULETTE" ? undefined : state.selected,
   };

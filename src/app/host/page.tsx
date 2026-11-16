@@ -47,6 +47,7 @@ import {
   openCredits,
   openRoom,
   podium,
+  requiredPlayers,
   ROOM_CAP,
   roomKey,
   toView,
@@ -283,7 +284,9 @@ function Host({ initial, id }: { initial: HubState; id: string }) {
           current.phase === "VOTING" &&
           Date.now() < current.deadline &&
           action.type === "vote" &&
-          choices.includes(action.value as GameChoice)
+          choices.includes(action.value as GameChoice) &&
+          connected.current.length >=
+            requiredPlayers(action.value as GameChoice)
         ) {
           commit({
             ...current,
