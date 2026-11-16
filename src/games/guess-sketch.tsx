@@ -9,10 +9,10 @@ import {
   type GameResult,
   type ScreenProps,
 } from "./types";
-import { sketchCategories } from "./prompts";
+import { guessSketchCategories } from "./prompts";
 
-const prompts = Object.entries(sketchCategories).flatMap(([category, words]) =>
-  words.map((word) => ({ word, category })),
+const prompts = Object.entries(guessSketchCategories).flatMap(
+  ([category, words]) => words.map((word) => ({ word, category })),
 );
 const empty: Stroke[] = [];
 type Sketch = {
@@ -250,7 +250,7 @@ export default defineGame<Sketch, View>({
   category: "DRAW & GUESS",
   accent: "#fa8cbf",
   icon: Brush,
-  description: "Draw absurd prompts and race to guess the picture.",
+  description: "Draw a simple word and race to guess the picture.",
   create,
   step,
   playerView: (data, id) => view(data, id),

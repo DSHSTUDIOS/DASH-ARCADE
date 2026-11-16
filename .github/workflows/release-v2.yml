@@ -1,4 +1,4 @@
-name: Publish Dash Arcade v2.4.0
+name: Publish Dash Arcade v2.4.1
 
 on:
   push:
@@ -19,18 +19,18 @@ jobs:
       - name: Assemble the signed APK and verify its checksum
         run: |
           node scripts/extract-preview-apk.mjs
-          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.4.0.apk
+          cp downloads/Dash-Arcade-v2-debug.apk Dash-Arcade-v2.4.1.apk
       - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           ARCADE_RELEASE_COMMIT: ${{ github.sha }}
         run: |
-          if gh release view v2.4.0 > /dev/null 2>&1; then
-            gh release download v2.4.0 --pattern Dash-Arcade-v2.4.0.apk --output existing.apk
-            cmp existing.apk Dash-Arcade-v2.4.0.apk
+          if gh release view v2.4.1 > /dev/null 2>&1; then
+            gh release download v2.4.1 --pattern Dash-Arcade-v2.4.1.apk --output existing.apk
+            cmp existing.apk Dash-Arcade-v2.4.1.apk
             exit
           fi
-          gh release create v2.4.0 Dash-Arcade-v2.4.0.apk \
+          gh release create v2.4.1 Dash-Arcade-v2.4.1.apk \
             --target "$ARCADE_RELEASE_COMMIT" \
-            --title "Dash Arcade v2.4.0" \
-            --notes "Cabinet Classics adds Drop Zone, Fleet Hunt, Word Sync, High Stack, Color Echo, and Cue Rush. The phone ballot now has Classics and Team play filters and follows the TV host’s catalog."
+            --title "Dash Arcade v2.4.1" \
+            --notes "GuessSketch now draws from 80 simple one-word prompts across animals, objects, food, and places."
